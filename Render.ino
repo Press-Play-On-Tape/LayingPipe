@@ -1,4 +1,4 @@
-void renderBoard() {
+void renderBoard() { 
 //Serial.println("renderBoard()");
 //Serial.print("  player.x :");
 //Serial.println(player.x);

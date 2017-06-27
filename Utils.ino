@@ -1,4 +1,4 @@
-bool nodeAlreadyPlayed(byte value) {
+bool nodeAlreadyPlayed(byte value) { 
 //Serial.println("nodeAlreadyPlayed()");
     for (byte y = 0; y < maze.maxY; y++) {
       
