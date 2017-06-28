@@ -29,7 +29,7 @@ Serial.println(" ");
 }
 
 bool clearBoard(byte nodeValue) {
-
+Serial.println("clearBoard()");
   for (byte y = 0; y < maze.maxY; y++) {
     
     for (byte x = 0; x < maze.maxX; x++) {
@@ -65,6 +65,11 @@ byte getNodeValue(byte x, byte y) {
 
 }
 
+byte getSolutionValue(byte x, byte y) {
+  
+  return (solution[y][x] & 0x0F);
+
+}
 
 byte getPipeValue(byte x, byte y) {
   
@@ -72,33 +77,26 @@ byte getPipeValue(byte x, byte y) {
 
 }
 
-void setPipeValueXXXX(byte x, byte y, byte value) {
-  
-  board[y][x] = (board[y][x] & 0x0F) | (value << 4);
-  
-}
-
-
 void setPipeValue(byte x, byte y, byte pipeValue, byte nodeValue) {
   
   board[y][x] = (pipeValue << 4) | nodeValue;
   
 }
 
-bool validMove(byte selectedNode, byte x, byte y) {
+bool validMove(SelectedNode selectedNode, byte x, byte y) {
 
 
    Serial.println("validMove()");
 
   // Off the grid!
-  if (x < 0 || x > maze.maxX || y < 0 || y > maze.maxY) return false;
+  if (x < 0 || x >= maze.maxX || y < 0 || y >= maze.maxY) return false;
     Serial.println("  validMove 2");
     Serial.print("    x: ");
     Serial.println(x);
     Serial.print("    y: ");
     Serial.println(y);
     Serial.print("    selectedNode: ");
-    Serial.println(selectedNode);
+    Serial.println(selectedNode.value);
     Serial.print("    isNode(x,y): ");
     Serial.println(isNode(x,y));
     Serial.print("    getPipeValue(x,y): ");
@@ -107,7 +105,10 @@ bool validMove(byte selectedNode, byte x, byte y) {
     Serial.println(getNodeValue(x,y));
   
   
-  if (!isNode(x,y) && (getPipeValue(x,y) == NOTHING || getNodeValue(x,y) == selectedNode)) return true;
+  if (
+      (!isNode(x,y) && getPipeValue(x,y) == NOTHING) ||
+      (isNode(x,y) && getNodeValue(x,y) == selectedNode.value && (x != selectedNode.x || y != selectedNode.y))
+     ) return true;
   
    Serial.println("  validMove 3");
   return false;
