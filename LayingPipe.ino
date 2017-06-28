@@ -1,10 +1,8 @@
 #include "Arduboy2.h" 
 #include "Images.h"
-#include <StackArray.h>
 
 Arduboy2 arduboy;
 Sprites sprites;
-StackArray <int> st;
 
 byte board[5][5] = {
   {0xF1, 0x00, 0xF2, 0x00, 0xF4},
@@ -66,6 +64,11 @@ struct Maze
 
 #define GRID_WIDTH              11
 #define GRID_HEIGHT             11
+
+#define UP                      0
+#define DOWN                    1
+#define LEFT                    2
+#define RIGHT                   3
 
 const byte* const nodes[] = {node_0, node_1, node_2, node_3, node_4, node_5, node_6, node_7, node_8, node_9, node_10, node_11, node_12 };
 const byte* const pipes[] = {pipe_nothing, pipe_horizontal, pipe_horizontal, pipe_vertical, pipe_vertical, pipe_corner_TL, pipe_corner_TL, pipe_corner_TR, pipe_corner_TR, pipe_corner_BL, pipe_corner_BL, pipe_corner_BR, pipe_corner_BR};
@@ -183,7 +186,7 @@ void play_NodeSelected() {
 
   if (arduboy.justPressed(LEFT_BUTTON)) {
     
-    if (validMove(player.selectedNode, player.x - 1, player.y)) {
+    if (validMove(LEFT, player.selectedNode, player.x - 1, player.y)) {
 
 //echoBoard();
 
@@ -264,7 +267,7 @@ void play_NodeSelected() {
   if (arduboy.justPressed(RIGHT_BUTTON)) {
 //echoBoard();
     
-    if (validMove(player.selectedNode, player.x + 1, player.y)) {
+    if (validMove(RIGHT, player.selectedNode, player.x + 1, player.y)) {
 
       switch (getPipeValue(player.x, player.y)) {
 
@@ -343,7 +346,7 @@ void play_NodeSelected() {
 
   if (arduboy.justPressed(UP_BUTTON)) {
     
-    if (validMove(player.selectedNode, player.x, player.y - 1)) {
+    if (validMove(UP, player.selectedNode, player.x, player.y - 1)) {
 
 //echoBoard();
 
@@ -421,7 +424,7 @@ void play_NodeSelected() {
 
   if (arduboy.justPressed(DOWN_BUTTON)) {
     
-    if (validMove(player.selectedNode, player.x, player.y + 1)) {
+    if (validMove(DOWN, player.selectedNode, player.x, player.y + 1)) {
 
 //Serial.println("down");      
 //echoBoard();

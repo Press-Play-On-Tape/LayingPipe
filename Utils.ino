@@ -83,7 +83,7 @@ void setPipeValue(byte x, byte y, byte pipeValue, byte nodeValue) {
   
 }
 
-bool validMove(SelectedNode selectedNode, byte x, byte y) {
+bool validMove(byte direction, SelectedNode selectedNode, byte x, byte y) {
 
 
    Serial.println("validMove()");
@@ -111,6 +111,76 @@ bool validMove(SelectedNode selectedNode, byte x, byte y) {
      ) return true;
   
    Serial.println("  validMove 3");
+
+  // Is the pipe turning back on itself?
+  switch (direction) {
+
+    case (UP):
+    
+      switch (getPipeValue(player.x, player.y)) {
+
+        case PIPE_VERTICAL_TB:
+        case PIPE_CORNER_RB:
+        case PIPE_CORNER_LB:
+          return true;
+
+        default:
+          return false;
+
+      }
+
+      break;
+      
+    case (DOWN):
+    
+      switch (getPipeValue(player.x, player.y)) {
+          
+        case PIPE_VERTICAL_BT:
+        case PIPE_CORNER_LT:
+        case PIPE_CORNER_RT:
+          return true;
+
+        default:
+          return false;
+
+      }
+
+      break;
+
+    case (LEFT):
+    
+      switch (getPipeValue(player.x, player.y)) {
+   
+        case PIPE_CORNER_TR:
+        case PIPE_CORNER_BR:
+        case PIPE_HORIZONTAL_LR:
+          return true;
+
+        default:
+          return false;
+
+      }
+
+      break;
+
+    case (RIGHT):
+    
+      switch (getPipeValue(player.x, player.y)) {
+
+        case PIPE_CORNER_TL:
+        case PIPE_CORNER_BL:
+        case PIPE_HORIZONTAL_RL:
+          return true;
+
+        default:
+          return false;
+
+      }
+
+      break;
+
+  }
+  
   return false;
   
 }
