@@ -1,3 +1,68 @@
+byte leftValue(byte val) {
+
+  return val >> 4; 
+      
+}
+
+byte rightValue(byte val) {
+
+  return val & 0x0F; 
+      
+}
+
+void initBoard(byte puzzleType, byte puzzleNumber) {
+
+  puzzle.maxX = puzzleType;
+  puzzle.maxY = puzzleType;
+  
+  byte x = 0;
+  byte y = 0;
+  byte z = 0;
+  byte bytesToRead = (puzzleType / 2) * puzzleType;
+  
+  memset(board, 0, (sizeof(board) / sizeof(board[0]));
+	
+  for (byte i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
+
+	switch (puzzleType) {
+	  
+	  case PUZZLE_5X5:
+		  z = puzzles_5x5[i];
+		  break;
+		  
+  	  case PUZZLE_7X7:
+		  z = puzzles_7x7[i];
+		  break;
+		  
+  	  case PUZZLE_9X9:
+		  z = puzzles_9x9[i];
+		  break;
+
+	}
+	  
+	  if ((x <= puzzle.maxX) && leftValue(z) > 0) {
+		  
+		  board[y][x] = 0xF0 | leftValue(z);
+		  
+	  }
+	  
+	  x++;
+	  
+	  if ((x <= puzzle.maxX) && rightValue(z) > 0) {
+		  
+		  board[y][x] = 0xF0 | rightValue(z);
+		  
+	  }
+	  
+	  x++;
+	  
+	  if (x >= puzzle.maxX) { y++; }
+		  
+  }
+	
+}
+
+
 bool nodeAlreadyPlayed(byte value) { 
 
     for (byte y = 0; y < maze.maxY; y++) {

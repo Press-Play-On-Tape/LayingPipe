@@ -1,14 +1,3 @@
-byte leftValue(byte val) {
-
-  return val >> 4; 
-      
-}
-
-byte rightValue(byte val) {
-
-  return val & 0x0F; 
-      
-}
 
 void echoBoard() {
 
