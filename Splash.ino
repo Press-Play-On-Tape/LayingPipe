@@ -11,5 +11,7 @@ void drawGameOver() {
   arduboy.print("Congratulations");
   arduboy.display();
   delay(2000);
+
+  puzzleIdx++;
   
 }
