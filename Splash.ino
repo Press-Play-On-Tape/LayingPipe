@@ -44,9 +44,9 @@ void drawSplash() {
   skipSplash = splashAnimation(80,  48, logo_straight_LR_noflange, frame, skipSplash);
   skipSplash = splashAnimation(96,  48, logo_elbow_LB, frame, skipSplash);
 
-  skipSplash = splashDelay(500, skipSplash);
+  skipSplash = splashDelay(1000, skipSplash);
   
-  gameState = STATE_GAME_INIT_GAME;
+  gameState = STATE_GAME_LEVEL_SELECT;
   
 }
 
