@@ -1,14 +1,14 @@
 void renderBoard() { 
 //Serial.println("renderBoard()");
-//Serial.print("  player.x :");
-//Serial.println(player.x);
-//Serial.print("  player.y :");
-//Serial.println(player.y);
+//Serial.print("  player.highlightedNode.x :");
+//Serial.println(player.highlightedNode.x);
+//Serial.print("  player.highlightedNode.y :");
+//Serial.println(player.highlightedNode.y);
   arduboy.clear();
   
-  for (byte y = 0; y < maze.maxY; y++) {
+  for (byte y = 0; y < puzzle.maximum.y; y++) {
       
-    for (byte x = 0; x < maze.maxX; x++) {
+    for (byte x = 0; x < puzzle.maximum.x; x++) {
       
       if (isPipe(x,y)) {
         sprites.drawOverwrite(x * GRID_WIDTH, y * GRID_HEIGHT, pipes[getPipeValue(x, y)], frame);
@@ -18,9 +18,9 @@ void renderBoard() {
       
   }
   
-  for (byte y = 0; y < maze.maxY; y++) {
+  for (byte y = 0; y < puzzle.maximum.y; y++) {
       
-    for (byte x = 0; x < maze.maxX; x++) {
+    for (byte x = 0; x < puzzle.maximum.x; x++) {
       
       if (isNode(x, y)) {
         sprites.drawOverwrite(x * GRID_WIDTH + 2, y * GRID_HEIGHT + 2, nodes[getNodeValue(x,y)], frame);
@@ -41,8 +41,8 @@ void renderBoard() {
   }
 */  
 
-    for (byte y = 0; y <= maze.maxY; y++) {
-  for (byte x = 0; x <= maze.maxX; x++) {
+    for (byte y = 0; y <= puzzle.maximum.y; y++) {
+  for (byte x = 0; x <= puzzle.maximum.x; x++) {
 //    if (x > 0) arduboy.drawPixel((x * GRID_WIDTH) -2, (y * GRID_HEIGHT), WHITE);
     arduboy.drawPixel((x * GRID_WIDTH), (y * GRID_HEIGHT), WHITE);
 //    if (x < maze.maxX) arduboy.drawPixel((x * GRID_WIDTH) + 2, (y * GRID_HEIGHT), WHITE);
@@ -52,6 +52,6 @@ void renderBoard() {
   }
 
   
-  arduboy.drawRect(player.x * GRID_WIDTH, player.y * GRID_HEIGHT, GRID_WIDTH + 1, GRID_HEIGHT + 1, WHITE);
+  arduboy.drawRect(player.highlightedNode.x * GRID_WIDTH, player.highlightedNode.y * GRID_HEIGHT, GRID_WIDTH + 1, GRID_HEIGHT + 1, WHITE);
 
 }

@@ -12,15 +12,15 @@ byte rightValue(byte val) {
 
 void initBoard(byte puzzleType, byte puzzleNumber) {
 
-  puzzle.maxX = puzzleType;
-  puzzle.maxY = puzzleType;
+  puzzle.maximum.x = puzzleType;
+  puzzle.maximum.y = puzzleType;
   
   byte x = 0;
   byte y = 0;
   byte z = 0;
   byte bytesToRead = (puzzleType / 2) * puzzleType;
   
-  memset(board, 0, (sizeof(board) / sizeof(board[0]));
+  memset(puzzle.board, 0, (sizeof(puzzle.board) / sizeof(puzzle.board[0])));
 	
   for (byte i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
 
@@ -40,23 +40,23 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
 
 	}
 	  
-	  if ((x <= puzzle.maxX) && leftValue(z) > 0) {
+	  if ((x <= puzzle.maximum.x) && leftValue(z) > 0) {
 		  
-		  board[y][x] = 0xF0 | leftValue(z);
-		  
-	  }
-	  
-	  x++;
-	  
-	  if ((x <= puzzle.maxX) && rightValue(z) > 0) {
-		  
-		  board[y][x] = 0xF0 | rightValue(z);
+		  puzzle.board[y][x] = 0xF0 | leftValue(z);
 		  
 	  }
 	  
 	  x++;
 	  
-	  if (x >= puzzle.maxX) { y++; }
+	  if ((x <= puzzle.maximum.x) && rightValue(z) > 0) {
+		  
+		  puzzle.board[y][x] = 0xF0 | rightValue(z);
+		  
+	  }
+	  
+	  x++;
+	  
+	  if (x >= puzzle.maximum.x) { y++; }
 		  
   }
 	
@@ -65,9 +65,9 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
 
 bool nodeAlreadyPlayed(byte value) { 
 
-    for (byte y = 0; y < maze.maxY; y++) {
+    for (byte y = 0; y < puzzle.maximum.y; y++) {
       
-      for (byte x = 0; x < maze.maxX; x++) {
+      for (byte x = 0; x < puzzle.maximum.x; x++) {
         if (getNodeValue(x, y) == value && !isNode(x, y)) {
           
           return true;
@@ -84,13 +84,13 @@ bool nodeAlreadyPlayed(byte value) {
 
 bool clearBoard(byte nodeValue) {
 
-  for (byte y = 0; y < maze.maxY; y++) {
+  for (byte y = 0; y < puzzle.maximum.y; y++) {
     
-    for (byte x = 0; x < maze.maxX; x++) {
+    for (byte x = 0; x < puzzle.maximum.x; x++) {
       
       if (getNodeValue(x, y) == nodeValue && !isNode(x, y)) {
         
-        board[y][x] = NOTHING;
+        puzzle.board[y][x] = NOTHING;
         
       }
       
@@ -102,47 +102,41 @@ bool clearBoard(byte nodeValue) {
 
 bool isNode(byte x, byte y) {
 
-  return (board[y][x] & 0xF0) == 0xF0;
+  return (puzzle.board[y][x] & 0xF0) == 0xF0;
   
 }
 
 
 bool isPipe(byte x, byte y) {
 
-  return (board[y][x] & 0xF0) > 0x00 && (board[y][x] & 0xF0) != 0xF0;
+  return (puzzle.board[y][x] & 0xF0) > 0x00 && (puzzle.board[y][x] & 0xF0) != 0xF0;
   
 }
 
 byte getNodeValue(byte x, byte y) {
   
-  return (board[y][x] & 0x0F);
-
-}
-
-byte getSolutionValue(byte x, byte y) {
-  
-  return (solution[y][x] & 0x0F);
+  return (puzzle.board[y][x] & 0x0F);
 
 }
 
 byte getPipeValue(byte x, byte y) {
   
-  return (board[y][x] & 0xF0) >> 4;
+  return (puzzle.board[y][x] & 0xF0) >> 4;
 
 }
 
 void setPipeValue(byte x, byte y, byte pipeValue, byte nodeValue) {
   
-  board[y][x] = (pipeValue << 4) | nodeValue;
+  puzzle.board[y][x] = (pipeValue << 4) | nodeValue;
   
 }
 
-bool validMove(byte direction, SelectedNode selectedNode, byte x, byte y) {
+bool validMove(byte direction, Node selectedNode, byte x, byte y) {
 
 	
   // Off the grid!
 
-  if (x < 0 || x >= maze.maxX || y < 0 || y >= maze.maxY) return false;
+  if (x < 0 || x >= puzzle.maximum.x || y < 0 || y >= puzzle.maximum.y) return false;
   
   
   // Is it a clear cell or the matching node?
@@ -159,7 +153,7 @@ bool validMove(byte direction, SelectedNode selectedNode, byte x, byte y) {
 
     case (UP):
     
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_VERTICAL_TB:
         case PIPE_CORNER_RB:
@@ -172,7 +166,7 @@ bool validMove(byte direction, SelectedNode selectedNode, byte x, byte y) {
       
     case (DOWN):
     
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
           
         case PIPE_VERTICAL_BT:
         case PIPE_CORNER_LT:
@@ -185,7 +179,7 @@ bool validMove(byte direction, SelectedNode selectedNode, byte x, byte y) {
 
     case (LEFT):
     
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
    
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
@@ -198,7 +192,7 @@ bool validMove(byte direction, SelectedNode selectedNode, byte x, byte y) {
 
     case (RIGHT):
     
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:

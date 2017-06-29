@@ -1,40 +1,24 @@
 #include "Arduboy2.h" 
 #include "Images.h"
 #include "Puzzles.h"
-#include "Puzzle.h"
 
 Arduboy2 arduboy;
 Sprites sprites;
 
-byte board[9][9] = {
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
-};
-
-struct SelectedNode {
+struct Node {
   byte x;
   byte y;
   byte value;
 };
 
-struct Player
-{
-  byte x;
-  byte y;
-  SelectedNode selectedNode;
+struct Player {
+  Node highlightedNode;
+  Node selectedNode;
 };
 
-struct Puzzle
-{
-  byte maxX;
-  byte maxY;
+struct Puzzle {
+  Node maximum;
+  byte board[9][9];
 };
 
 #define NOTHING                 0
@@ -60,27 +44,39 @@ struct Puzzle
 #define LEFT                    2
 #define RIGHT                   3
 
-#define PUZZLE_5X5				5
-#define PUZZLE_7X7				7
-#define PUZZLE_9X9				9
+#define PUZZLE_5X5				      5
+#define PUZZLE_7X7				      7
+#define PUZZLE_9X9				      9
 
 const byte* const nodes[] = {node_0, node_1, node_2, node_3, node_4, node_5, node_6, node_7, node_8, node_9, node_10, node_11, node_12 };
 const byte* const pipes[] = {pipe_nothing, pipe_horizontal, pipe_horizontal, pipe_vertical, pipe_vertical, pipe_corner_TL, pipe_corner_TL, pipe_corner_TR, pipe_corner_TR, pipe_corner_BL, pipe_corner_BL, pipe_corner_BR, pipe_corner_BR};
 
 byte frame = 0;
+byte puzzleType = PUZZLE_5X5;
 
 Player player;
-Maze maze;
+Puzzle puzzle;
 
+/*
+puzzle.board = {
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+  {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
+};
+*/
 
 /* ----------------------------------------------------------------------------
     Initialise the Arduboy and get ready ..
 */
 void setup() {
 
-  maze.maxX = 5;
-  maze.maxY = 5;
-
+  initBoard(PUZZLE_5X5, 0);
   arduboy.boot();
   arduboy.setFrameRate(30);
   arduboy.clear();
@@ -126,32 +122,32 @@ void loop() {
 
 void play_NoSelection() {
 
-  if (arduboy.justPressed(LEFT_BUTTON) && player.x > 0)               {
+  if (arduboy.justPressed(LEFT_BUTTON) && player.highlightedNode.x > 0)                 {
     Serial.println("left");
-    player.x--;
+    player.highlightedNode.x--;
   }
-  if (arduboy.justPressed(RIGHT_BUTTON) && player.x < maze.maxX - 1)  {
+  if (arduboy.justPressed(RIGHT_BUTTON) && player.highlightedNode.x < puzzle.maximum.x - 1)  {
     Serial.println("right");
-    player.x++;
+    player.highlightedNode.x++;
   }
-  if (arduboy.justPressed(UP_BUTTON) && player.y > 0)                 {
+  if (arduboy.justPressed(UP_BUTTON) && player.highlightedNode.y > 0)                 {
     Serial.println("up");
-    player.y--;
+    player.highlightedNode.y--;
   }
-  if (arduboy.justPressed(DOWN_BUTTON) && player.y < maze.maxY - 1)   {
+  if (arduboy.justPressed(DOWN_BUTTON) && player.highlightedNode.y < puzzle.maximum.y - 1)   {
     Serial.println("down");
-    player.y++;
+    player.highlightedNode.y++;
   }
 
-  if (arduboy.justPressed(A_BUTTON) && isNode(player.x, player.y)) {
+  if (arduboy.justPressed(A_BUTTON) && isNode(player.highlightedNode.x, player.highlightedNode.y)) {
     Serial.println("A Button");
-    if (nodeAlreadyPlayed(getNodeValue(player.x, player.y))) {
+    if (nodeAlreadyPlayed(getNodeValue(player.highlightedNode.x, player.highlightedNode.y))) {
       Serial.println(" nodeAlreadyPlayed()");
 
-      clearBoard(getNodeValue(player.x, player.y));
-      player.selectedNode.value = getNodeValue(player.x, player.y);
-      player.selectedNode.x = player.x;
-      player.selectedNode.y = player.y;
+      clearBoard(getNodeValue(player.highlightedNode.x, player.highlightedNode.y));
+      player.selectedNode.value = getNodeValue(player.highlightedNode.x, player.highlightedNode.y);
+      player.selectedNode.x = player.highlightedNode.x;
+      player.selectedNode.y = player.highlightedNode.y;
       gameState = STATE_GAME_NODE_SELECTED;
 
     }
@@ -159,9 +155,9 @@ void play_NoSelection() {
 
       Serial.println(" select a node");
 
-      player.selectedNode.value = getNodeValue(player.x, player.y);
-      player.selectedNode.x = player.x;
-      player.selectedNode.y = player.y;
+      player.selectedNode.value = getNodeValue(player.highlightedNode.x, player.highlightedNode.y);
+      player.selectedNode.x = player.highlightedNode.x;
+      player.selectedNode.y = player.highlightedNode.y;
       gameState = STATE_GAME_NODE_SELECTED;
 
     }
@@ -169,7 +165,7 @@ void play_NoSelection() {
   }
 
   if (arduboy.justPressed(B_BUTTON)) {
-isPuzzleComplete2();
+
   }
 
   renderBoard();
@@ -180,41 +176,41 @@ void play_NodeSelected() {
 
   if (arduboy.justPressed(LEFT_BUTTON)) {
     
-    if (validMove(LEFT, player.selectedNode, player.x - 1, player.y)) {
+    if (validMove(LEFT, player.selectedNode, player.highlightedNode.x - 1, player.highlightedNode.y)) {
 
 //echoBoard();
 
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_HORIZONTAL_LR:
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
-          updatePipeWhenReversing(player.x - 1, player.y);
-          setPipeValue(player.x, player.y, NOTHING, NOTHING);
+          updatePipeWhenReversing(player.highlightedNode.x - 1, player.highlightedNode.y);
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_HORIZONTAL_RL:
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
-          if (!isNode(player.x - 1, player.y)) { setPipeValue(player.x - 1, player.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_LT:
         case PIPE_CORNER_RT:
         case PIPE_VERTICAL_BT:
-          if (!isNode(player.x - 1, player.y)) { setPipeValue(player.x - 1, player.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_BL, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_BL, player.selectedNode.value);
           break;
 
         case PIPE_CORNER_LB:
         case PIPE_CORNER_RB:
         case PIPE_VERTICAL_TB:
-          if (!isNode(player.x - 1, player.y)) { setPipeValue(player.x - 1, player.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_TL, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_TL, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.x - 1, player.y, PIPE_HORIZONTAL_RL, player.selectedNode.value);
+          setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value);
           break;
 
       }
@@ -222,7 +218,7 @@ void play_NodeSelected() {
   
       // Have we selected the original node?  If so clear the board of this pipe ..
       
-      if (player.x - 1 == player.selectedNode.x && player.y == player.selectedNode.y) {
+      if (player.highlightedNode.x - 1 == player.selectedNode.x && player.highlightedNode.y == player.selectedNode.y) {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
@@ -234,7 +230,7 @@ void play_NodeSelected() {
   
       // Have we selected a pair node?  
       
-      if (isNode(player.x - 1, player.y)  && getNodeValue(player.x - 1, player.y) == player.selectedNode.value) {
+      if (isNode(player.highlightedNode.x - 1, player.highlightedNode.y)  && getNodeValue(player.highlightedNode.x - 1, player.highlightedNode.y) == player.selectedNode.value) {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
@@ -251,7 +247,7 @@ void play_NodeSelected() {
                  
       }  
       
-      player.x--;
+      player.highlightedNode.x--;
       
     }
 //echoBoard();
@@ -261,39 +257,39 @@ void play_NodeSelected() {
   if (arduboy.justPressed(RIGHT_BUTTON)) {
 //echoBoard();
     
-    if (validMove(RIGHT, player.selectedNode, player.x + 1, player.y)) {
+    if (validMove(RIGHT, player.selectedNode, player.highlightedNode.x + 1, player.highlightedNode.y)) {
 
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_HORIZONTAL_RL:
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
-          updatePipeWhenReversing(player.x + 1, player.y);
-          setPipeValue(player.x, player.y, NOTHING, NOTHING);
+          updatePipeWhenReversing(player.highlightedNode.x + 1, player.highlightedNode.y);
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_HORIZONTAL_LR:
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
-          if (!isNode(player.x + 1, player.y)) { setPipeValue(player.x + 1, player.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_RT:
         case PIPE_CORNER_LT:
         case PIPE_VERTICAL_BT:
-          if (!isNode(player.x + 1, player.y)) { setPipeValue(player.x + 1, player.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_BR, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_BR, player.selectedNode.value);
           break;
 
         case PIPE_CORNER_RB:
         case PIPE_CORNER_LB:
         case PIPE_VERTICAL_TB:
-          if (!isNode(player.x + 1, player.y)) { setPipeValue(player.x + 1, player.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_TR, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_TR, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.x + 1, player.y, PIPE_HORIZONTAL_LR, player.selectedNode.value);
+          setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value);
           break;
 
       }
@@ -301,7 +297,7 @@ void play_NodeSelected() {
   
       // Have we selected the original node?  If so clear the board of this pipe ..
       
-      if (player.x + 1 == player.selectedNode.x && player.y == player.selectedNode.y) {
+      if (player.highlightedNode.x + 1 == player.selectedNode.x && player.highlightedNode.y == player.selectedNode.y) {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
@@ -313,7 +309,7 @@ void play_NodeSelected() {
   
       // Have we selected a pair node?  
       
-      if (isNode(player.x + 1, player.y)  && getNodeValue(player.x + 1, player.y) == player.selectedNode.value) {
+      if (isNode(player.highlightedNode.x + 1, player.highlightedNode.y)  && getNodeValue(player.highlightedNode.x + 1, player.highlightedNode.y) == player.selectedNode.value) {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
@@ -330,7 +326,7 @@ void play_NodeSelected() {
                 
       }
     
-      player.x++;
+      player.highlightedNode.x++;
   
     }
     
@@ -340,41 +336,41 @@ void play_NodeSelected() {
 
   if (arduboy.justPressed(UP_BUTTON)) {
     
-    if (validMove(UP, player.selectedNode, player.x, player.y - 1)) {
+    if (validMove(UP, player.selectedNode, player.highlightedNode.x, player.highlightedNode.y - 1)) {
 
 //echoBoard();
 
-      switch (getPipeValue(player.x, player.y)) {
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_VERTICAL_TB:
         case PIPE_CORNER_RB:
         case PIPE_CORNER_LB:
-          updatePipeWhenReversing(player.x, player.y - 1);
-          setPipeValue(player.x, player.y, NOTHING, NOTHING);
+          updatePipeWhenReversing(player.highlightedNode.x, player.highlightedNode.y - 1);
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_VERTICAL_BT:
         case PIPE_CORNER_LT:
         case PIPE_CORNER_RT:
-          if (!isNode(player.x, player.y - 1)) { setPipeValue(player.x, player.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
         case PIPE_HORIZONTAL_LR:
-          if (!isNode(player.x, player.y - 1)) { setPipeValue(player.x, player.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_LT, player.selectedNode.value); 
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_LT, player.selectedNode.value); 
           break;
 
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
         case PIPE_HORIZONTAL_RL:
-          if (!isNode(player.x, player.y - 1)) { setPipeValue(player.x, player.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_RT, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_RT, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.x, player.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value);
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value);
           break;
 
       }
@@ -382,7 +378,7 @@ void play_NodeSelected() {
   
       // Have we selected the original node?  If so clear the board of this pipe ..
       
-      if (player.x == player.selectedNode.x && player.y - 1 == player.selectedNode.y) {
+      if (player.highlightedNode.x == player.selectedNode.x && player.highlightedNode.y - 1 == player.selectedNode.y) {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
@@ -394,7 +390,7 @@ void play_NodeSelected() {
   
       // Have we selected a pair node?  
       
-      if (isNode(player.x, player.y - 1)  && getNodeValue(player.x, player.y - 1) == player.selectedNode.value) {
+      if (isNode(player.highlightedNode.x, player.highlightedNode.y - 1)  && getNodeValue(player.highlightedNode.x, player.highlightedNode.y - 1) == player.selectedNode.value) {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
@@ -411,49 +407,49 @@ void play_NodeSelected() {
                  
       }  
     
-      player.y--;
+      player.highlightedNode.y--;
     }
 //echoBoard();
   }
 
   if (arduboy.justPressed(DOWN_BUTTON)) {
     
-    if (validMove(DOWN, player.selectedNode, player.x, player.y + 1)) {
+    if (validMove(DOWN, player.selectedNode, player.highlightedNode.x, player.highlightedNode.y + 1)) {
 
 //Serial.println("down");      
 //echoBoard();
-//Serial.println(getPipeValue(player.x, player.y));      
-      switch (getPipeValue(player.x, player.y)) {
+//Serial.println(getPipeValue(player.highlightedNode.x, player.highlightedNode.y));      
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_VERTICAL_BT:
         case PIPE_CORNER_RT:
         case PIPE_CORNER_LT:
-          updatePipeWhenReversing(player.x, player.y + 1);
-          setPipeValue(player.x, player.y, NOTHING, NOTHING);
+          updatePipeWhenReversing(player.highlightedNode.x, player.highlightedNode.y + 1);
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_VERTICAL_TB:
         case PIPE_CORNER_LB:
         case PIPE_CORNER_RB:
-          if (!isNode(player.x, player.y + 1)) { setPipeValue(player.x, player.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
         case PIPE_HORIZONTAL_LR:
-          if (!isNode(player.x, player.y + 1)) { setPipeValue(player.x, player.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_LB, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_LB, player.selectedNode.value);
           break;
 
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
         case PIPE_HORIZONTAL_RL:
-          if (!isNode(player.x, player.y + 1)) { setPipeValue(player.x, player.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
-          setPipeValue(player.x, player.y, PIPE_CORNER_RB, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_RB, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.x, player.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value);
+          setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value);
           break;
         
       }
@@ -461,7 +457,7 @@ void play_NodeSelected() {
   
       // Have we selected the original node?  If so clear the board of this pipe ..
       
-      if (player.x == player.selectedNode.x && player.y + 1 == player.selectedNode.y) {
+      if (player.highlightedNode.x == player.selectedNode.x && player.highlightedNode.y + 1 == player.selectedNode.y) {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
@@ -473,7 +469,7 @@ void play_NodeSelected() {
   
       // Have we selected a pair node?  
       
-      if (isNode(player.x, player.y + 1)  && getNodeValue(player.x, player.y + 1) == player.selectedNode.value) {
+      if (isNode(player.highlightedNode.x, player.highlightedNode.y + 1)  && getNodeValue(player.highlightedNode.x, player.highlightedNode.y + 1) == player.selectedNode.value) {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
@@ -490,7 +486,7 @@ void play_NodeSelected() {
   
       }  
    
-      player.y++;
+      player.highlightedNode.y++;
     }
 //echoBoard();
   }
@@ -542,9 +538,9 @@ void clearSelection() {
 
 bool isPuzzleComplete() {
 
-  for (byte y = 0; y < maze.maxY; y++) {
+  for (byte y = 0; y < puzzle.maximum.y; y++) {
     
-    for (byte x = 0; x < maze.maxX; x++) {
+    for (byte x = 0; x < puzzle.maximum.x; x++) {
       
       if (getNodeValue(x, y) == 0) {
         
