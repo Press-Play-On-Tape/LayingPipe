@@ -1,6 +1,7 @@
-#include "Arduboy2.h" 
+#include <Arduboy2.h> 
 #include "Images.h"
 #include "Puzzles.h"
+#include <ArduboyTones.h>
 
 #define DEBUG
 
@@ -32,6 +33,7 @@
 #define PUZZLE_9X9              9
 
 Arduboy2 arduboy;
+ArduboyTones sound(arduboy.audio.enabled);
 Sprites sprites;
 
 struct Node {
@@ -78,15 +80,16 @@ byte puzzleType = PUZZLE_5X5;
 byte puzzleIdx = 0;
 
 
+
 /* ----------------------------------------------------------------------------
     Initialise the Arduboy and get ready ..
 */
 void setup() {
 
-  initBoard(puzzleType, puzzleIdx);
-  arduboy.boot();
+  arduboy.begin();
   arduboy.setFrameRate(30);
   arduboy.clear();
+  arduboy.audio.begin();
 
 }
 
@@ -97,9 +100,10 @@ void setup() {
 */
 
 #define STATE_GAME_INTRO                      0
-#define STATE_GAME_NO_SELECTION               1
-#define STATE_GAME_NODE_SELECTED              2
-#define STATE_GAME_GAME_OVER                  3
+#define STATE_GAME_INIT_GAME                  1
+#define STATE_GAME_NO_SELECTION               2
+#define STATE_GAME_NODE_SELECTED              3
+#define STATE_GAME_GAME_OVER                  4
 
 byte gameState = STATE_GAME_INTRO;
 
@@ -107,6 +111,7 @@ typedef void (*FunctionPointer) ();
 
 const FunctionPointer PROGMEM gameLoop[] = {
   drawSplash,
+  play_InitGame,
   play_NoSelection,
   play_NodeSelected,
   drawGameOver
@@ -114,7 +119,7 @@ const FunctionPointer PROGMEM gameLoop[] = {
 
 
 /* ----------------------------------------------------------------------------
-    Play pipes !
+    Lay pipes !
 */
 void loop() {
 
@@ -126,30 +131,24 @@ void loop() {
 }
 
 
+void play_InitGame() {
+
+  arduboy.clear();
+  initBoard(puzzleType, puzzleIdx);
+  gameState = STATE_GAME_NO_SELECTION;
+  
+}
 
 void play_NoSelection() {
 
-  if (arduboy.justPressed(LEFT_BUTTON) && player.highlightedNode.x > 0)                 {
-    Serial.println("left");
-    player.highlightedNode.x--;
-  }
-  if (arduboy.justPressed(RIGHT_BUTTON) && player.highlightedNode.x < puzzle.maximum.x - 1)  {
-    Serial.println("right");
-    player.highlightedNode.x++;
-  }
-  if (arduboy.justPressed(UP_BUTTON) && player.highlightedNode.y > 0)                 {
-    Serial.println("up");
-    player.highlightedNode.y--;
-  }
-  if (arduboy.justPressed(DOWN_BUTTON) && player.highlightedNode.y < puzzle.maximum.y - 1)   {
-    Serial.println("down");
-    player.highlightedNode.y++;
-  }
+  if (arduboy.justPressed(LEFT_BUTTON) && player.highlightedNode.x > 0)                         { player.highlightedNode.x--; }
+  if (arduboy.justPressed(RIGHT_BUTTON) && player.highlightedNode.x < puzzle.maximum.x - 1)     { player.highlightedNode.x++; }
+  if (arduboy.justPressed(UP_BUTTON) && player.highlightedNode.y > 0)                           { player.highlightedNode.y--; }
+  if (arduboy.justPressed(DOWN_BUTTON) && player.highlightedNode.y < puzzle.maximum.y - 1)      { player.highlightedNode.y++; }
 
   if (arduboy.justPressed(A_BUTTON) && isNode(player.highlightedNode.x, player.highlightedNode.y)) {
-    Serial.println("A Button");
+
     if (nodeAlreadyPlayed(getNodeValue(player.highlightedNode.x, player.highlightedNode.y))) {
-      Serial.println(" nodeAlreadyPlayed()");
 
       clearBoard(getNodeValue(player.highlightedNode.x, player.highlightedNode.y));
       player.selectedNode.value = getNodeValue(player.highlightedNode.x, player.highlightedNode.y);
@@ -160,18 +159,13 @@ void play_NoSelection() {
     }
     else {
 
-      Serial.println(" select a node");
-
       player.selectedNode.value = getNodeValue(player.highlightedNode.x, player.highlightedNode.y);
       player.selectedNode.x = player.highlightedNode.x;
       player.selectedNode.y = player.highlightedNode.y;
       gameState = STATE_GAME_NODE_SELECTED;
+      playSelectNode();
 
     }
-
-  }
-
-  if (arduboy.justPressed(B_BUTTON)) {
 
   }
 
@@ -184,8 +178,6 @@ void play_NodeSelected() {
   if (arduboy.justPressed(LEFT_BUTTON)) {
     
     if (validMove(LEFT, player.selectedNode, player.highlightedNode.x - 1, player.highlightedNode.y)) {
-
-//echoBoard();
 
       switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
@@ -257,12 +249,10 @@ void play_NodeSelected() {
       player.highlightedNode.x--;
       
     }
-//echoBoard();
     
   }
 
   if (arduboy.justPressed(RIGHT_BUTTON)) {
-//echoBoard();
     
     if (validMove(RIGHT, player.selectedNode, player.highlightedNode.x + 1, player.highlightedNode.y)) {
 
@@ -336,16 +326,12 @@ void play_NodeSelected() {
       player.highlightedNode.x++;
   
     }
-    
-//echoBoard();
 
   }
 
   if (arduboy.justPressed(UP_BUTTON)) {
     
     if (validMove(UP, player.selectedNode, player.highlightedNode.x, player.highlightedNode.y - 1)) {
-
-//echoBoard();
 
       switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
@@ -416,16 +402,13 @@ void play_NodeSelected() {
     
       player.highlightedNode.y--;
     }
-//echoBoard();
+
   }
 
   if (arduboy.justPressed(DOWN_BUTTON)) {
     
     if (validMove(DOWN, player.selectedNode, player.highlightedNode.x, player.highlightedNode.y + 1)) {
 
-//Serial.println("down");      
-//echoBoard();
-//Serial.println(getPipeValue(player.highlightedNode.x, player.highlightedNode.y));      
       switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
 
         case PIPE_VERTICAL_BT:
@@ -494,10 +477,10 @@ void play_NodeSelected() {
       }  
    
       player.highlightedNode.y++;
-    }
-//echoBoard();
-  }
 
+    }
+
+  }
 
   renderBoard();
   
@@ -535,31 +518,4 @@ void updatePipeWhenReversing(byte x, byte y) {
  
 }
 
-void clearSelection() {
-
-  player.selectedNode.value = 0;
-  player.selectedNode.x = 0;
-  player.selectedNode.y = 0;
-
-}
-
-bool isPuzzleComplete() {
-
-  for (byte y = 0; y < puzzle.maximum.y; y++) {
-    
-    for (byte x = 0; x < puzzle.maximum.x; x++) {
-      
-      if (getNodeValue(x, y) == 0) {
-        
-        return false;
-        
-      }
-      
-    }
-    
-  }
-
-  return true;
-  
-}
 

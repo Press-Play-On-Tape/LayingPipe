@@ -12,33 +12,33 @@ byte rightValue(byte val) {
 
 void initBoard(byte puzzleType, byte puzzleNumber) {
 
-  puzzle.maximum.x = puzzleType;
-  puzzle.maximum.y = puzzleType;
+  puzzle.maximum.x = puzzle.maximum.y = puzzleType;
   
   byte x = 0;
   byte y = 0;
   byte z = 0;
-  byte bytesToRead = (puzzleType / 2) * puzzleType;
   
-  memset(puzzle.board, 0, (sizeof(puzzle.board) / sizeof(puzzle.board[0])));
+  byte bytesToRead = (puzzleType % 2 == 0 ? (puzzleType / 2) * puzzleType : ((puzzleType / 2) + 1) * puzzleType);
 	
   for (byte i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
 
-	switch (puzzleType) {
-	  
-	  case PUZZLE_5X5:
-		  z = puzzles_5x5[i];
-		  break;
-		  
-  	  case PUZZLE_7X7:
-		  z = puzzles_7x7[i];
-		  break;
-		  
-  	  case PUZZLE_9X9:
-		  z = puzzles_9x9[i];
-		  break;
+  	switch (puzzleType) {
+      
+  	  case PUZZLE_5X5:
+  		  z = pgm_read_byte(&puzzles_5x5[i]);
+  		  break;
+  		  
+    	  case PUZZLE_7X7:
+  		  z = puzzles_7x7[i];
+  		  break;
+  		  
+    	  case PUZZLE_9X9:
+  		  z = puzzles_9x9[i];
+  		  break;
+  
+  	}
 
-	}
+    puzzle.board[y][x] = 0;
 	  
 	  if ((x <= puzzle.maximum.x) && leftValue(z) > 0) {
 		  
@@ -47,6 +47,8 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
 	  }
 	  
 	  x++;
+
+    puzzle.board[y][x] = 0;
 	  
 	  if ((x <= puzzle.maximum.x) && rightValue(z) > 0) {
 		  
@@ -56,7 +58,7 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
 	  
 	  x++;
 	  
-	  if (x >= puzzle.maximum.x) { y++; }
+	  if (x >= puzzle.maximum.x) { y++; x = 0; }
 		  
   }
 	
@@ -209,30 +211,30 @@ bool validMove(byte direction, Node selectedNode, byte x, byte y) {
   
 }
 
-/* ----------------------------------------------------------------------------
- *  Draw a horizontal dotted line. 
- *  
- *  So much nicer than a solid line!
- *  
- * /
-void drawHorizontalLine(byte x1, byte x2, byte y) {
+void clearSelection() {
 
-  for (byte x3 = x1; x3 <= x2; x3+=2) {
-    arduboy.drawPixel(x3, y, WHITE);
+  player.selectedNode.value = 0;
+  player.selectedNode.x = 0;
+  player.selectedNode.y = 0;
+
+}
+
+bool isPuzzleComplete() {
+
+  for (byte y = 0; y < puzzle.maximum.y; y++) {
+    
+    for (byte x = 0; x < puzzle.maximum.x; x++) {
+      
+      if (getNodeValue(x, y) == 0) {
+        
+        return false;
+        
+      }
+      
+    }
+    
   }
-  
-}*/
 
-/* ----------------------------------------------------------------------------
- *  Draw a horizontal dotted line. 
- *  
- *  So much nicer than a solid line!
- *  
- * /
-void drawVerticalLine(byte x, byte y1, byte y2) {
-
-  for (byte y3 = y1; y3 <= y2; y3+=2) {
-    arduboy.drawPixel(x, y3, WHITE);
-  }
+  return true;
   
-}*/
+}
