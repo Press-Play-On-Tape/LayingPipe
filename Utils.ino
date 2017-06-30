@@ -240,3 +240,20 @@ bool isPuzzleComplete() {
 }
 
 
+void toggleSoundSettings() {
+
+  if (arduboy.audio.enabled()) {
+  
+    arduboy.audio.off(); 
+    arduboy.audio.saveOnOff();
+  
+  }
+  else {
+  
+    arduboy.audio.on(); 
+    arduboy.audio.saveOnOff();
+  
+  }
+    
+}
+

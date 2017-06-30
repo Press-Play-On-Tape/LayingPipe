@@ -1,4 +1,4 @@
-const byte PROGMEM puzzles_5x5_count = 2;
+const byte puzzles_5x5_count = 2;
 const byte PROGMEM puzzles_5x5[] = {
 
 		  0x10, 0x20, 0x40,
@@ -15,12 +15,28 @@ const byte PROGMEM puzzles_5x5[] = {
   
 };
 
+const byte puzzles_6x6_count = 0;
+const byte PROGMEM puzzles_6x6[] = {
+		  
+		  0x10
+
+};
+
+const byte puzzles_7x7_count = 0;
 const byte PROGMEM puzzles_7x7[] = {
 		  
 		  0x10
 
 };
 
+const byte puzzles_8x8_count = 0;
+const byte PROGMEM puzzles_8x8[] = {
+		  
+		  0x10
+
+};
+
+const byte puzzles_9x9_count = 0;
 const byte PROGMEM puzzles_9x9[] = {
 		  
 		  0x10

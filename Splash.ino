@@ -68,21 +68,8 @@ bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool 
 
     if (arduboy.justPressed(B_BUTTON)) { 
 
-      if (arduboy.audio.enabled()) {
-      
-        arduboy.audio.off(); 
-        arduboy.audio.saveOnOff();
-
-      }
-      else {
-      
-        arduboy.audio.on(); 
-        arduboy.audio.saveOnOff();
-        
-      }
-
-      arduboy.display();
-        
+    	toggleSoundSettings();
+    	
     }
     
     arduboy.delayShort(15);  
@@ -103,24 +90,11 @@ bool splashDelay(int delayLength, bool skip) {
 
   while (delayLength >= 0) {
 
-    if (arduboy.justPressed(A_BUTTON)) { Serial.println("a2"); return true; }
+    if (arduboy.justPressed(A_BUTTON)) { return true; }
 
     if (arduboy.justPressed(B_BUTTON)) { 
 
-      if (arduboy.audio.enabled()) {
-      
-        arduboy.audio.off(); 
-        arduboy.audio.saveOnOff();
-
-      }
-      else {
-      
-        arduboy.audio.on(); 
-        arduboy.audio.saveOnOff();
-        
-      }
-
-      arduboy.display();
+    	toggleSoundSettings();
         
     }
     

@@ -73,8 +73,9 @@ puzzle =
     }
   };
 
-const byte* const nodes[] = {node_0, node_1, node_2, node_3, node_4, node_5, node_6, node_7, node_8, node_9, node_10, node_11, node_12, node_13, node_14 };
-const byte* const pipes[] = {pipe_nothing, pipe_horizontal, pipe_horizontal, pipe_vertical, pipe_vertical, pipe_corner_TL, pipe_corner_TL, pipe_corner_TR, pipe_corner_TR, pipe_corner_BL, pipe_corner_BL, pipe_corner_BR, pipe_corner_BR};
+const byte* nodes[] = {node_0, node_1, node_2, node_3, node_4, node_5, node_6, node_7, node_8, node_9, node_10, node_11, node_12, node_13, node_14 };
+const byte* pipes[] = {pipe_nothing, pipe_horizontal, pipe_horizontal, pipe_vertical, pipe_vertical, pipe_corner_TL, pipe_corner_TL, pipe_corner_TR, pipe_corner_TR, pipe_corner_BL, pipe_corner_BL, pipe_corner_BR, pipe_corner_BR};
+const byte levels[] = {PUZZLE_5X5, PUZZLE_6X6, PUZZLE_7X7, PUZZLE_8X8, PUZZLE_9X9};
 
 byte frame = 0;
 
@@ -105,10 +106,11 @@ void setup() {
 
 #define STATE_GAME_INTRO                      0
 #define STATE_GAME_LEVEL_SELECT               1
-#define STATE_GAME_INIT_GAME                  2
-#define STATE_GAME_NO_SELECTION               3
-#define STATE_GAME_NODE_SELECTED              4
-#define STATE_GAME_GAME_OVER                  5
+#define STATE_GAME_PUZZLE_SELECT              2
+#define STATE_GAME_INIT_GAME                  3
+#define STATE_GAME_NO_SELECTION               4
+#define STATE_GAME_NODE_SELECTED              5
+#define STATE_GAME_GAME_OVER                  6
 
 byte gameState = STATE_GAME_INTRO;
 
@@ -116,7 +118,8 @@ typedef void (*FunctionPointer) ();
 
 const FunctionPointer PROGMEM gameLoop[] = {
   drawSplash,
-  play_LevelSelect,
+  levelSelect,
+  puzzleSelect,
   play_InitGame,
   play_NoSelection,
   play_NodeSelected,
