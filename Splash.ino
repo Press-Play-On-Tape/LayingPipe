@@ -124,6 +124,8 @@ bool splashDelay(int delayLength, bool skip) {
 
 void drawGameOver() { 
   
+  arduboy.delayShort(1000);
+
   arduboy.clear();
       
   sprites.drawOverwrite(112,  0, logo_straight_TB_noflange, frame);
@@ -163,29 +165,41 @@ void drawGameOver() {
   sprites.drawOverwrite(96,  48, logo_elbow_LB, frame);
   arduboy.display();
 
-  delay(1000);
+  arduboy.delayShort(1000);
 
-   arduboy.setTextColor(BLACK);
-    arduboy.setTextBackground(WHITE);
-
+  arduboy.setTextColor(BLACK);
+  arduboy.setTextBackground(WHITE);
 
   arduboy.fillRect(12, 23, 104, 18, WHITE);
-  arduboy.setCursor(18, 28);
-  arduboy.print("Congratulations!");
-  arduboy.display();
+Serial.println(puzzleIdx);
+Serial.println(getNumberOfPuzzles(puzzleType));
+  
+  if (puzzleIdx == getNumberOfPuzzles(puzzleType) - 1) {
+  
+    arduboy.setCursor(21, 28);
+    arduboy.print("Level Finished!");
+    gameState = STATE_GAME_LEVEL_SELECT;
+  
+  }
+  else {
+   
+    arduboy.setCursor(18, 28);
+    arduboy.print("Congratulations!");
+    gameState = STATE_GAME_INIT_GAME;
 
-  arduboy.setTextColor(WHITE);
-  arduboy.setTextBackground(BLACK);
-
-
+  }
 
   puzzleIdx++;
   updateEEPROM(puzzleType, puzzleIdx);
+  
+  arduboy.display();
+  arduboy.setTextColor(WHITE);
+  arduboy.setTextBackground(BLACK);
 
   playPuzzleSolved();
-  gameOverDelay(500, false);
 
-  gameState = STATE_GAME_INIT_GAME;
+  gameOverDelay(1000, false);
+
   
 }
 

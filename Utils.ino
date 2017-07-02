@@ -11,7 +11,7 @@ byte rightValue(byte val) {
 }
 
 void initBoard(byte puzzleType, byte puzzleNumber) {
-  
+
   byte x = 0;
   byte y = 0;
   byte z = 0;
@@ -28,7 +28,7 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
   puzzle.scrollbar.slider.unit = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 6]);
   puzzle.scrollbar.slider.overall = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 7]);
 
-  for (byte i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
+  for (int i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
 
   	switch (puzzleType) {
       
@@ -77,7 +77,7 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
 	  if (x >= puzzle.maximum.x) { y++; x = 0; }
 		  
   }
-	
+
 }
 
 
@@ -265,6 +265,28 @@ bool isPuzzleComplete() {
   
 }
 
+byte getNumberOfPuzzles(byte puzzleType) {
+
+  switch (puzzleType) {
+    
+    case PUZZLE_5X5:
+      return puzzles_5x5_count;
+    
+    case PUZZLE_6X6:
+      return puzzles_6x6_count;
+    
+    case PUZZLE_7X7:
+      return puzzles_7x7_count;
+    
+    case PUZZLE_8X8:
+      return puzzles_8x8_count;
+    
+    case PUZZLE_9X9:
+      return puzzles_9x9_count;
+
+  }
+  
+}
 
 void toggleSoundSettings() {
 

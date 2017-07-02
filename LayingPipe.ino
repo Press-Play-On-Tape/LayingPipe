@@ -128,6 +128,7 @@ void setup() {
 #define STATE_GAME_GAME_OVER                  6
 
 byte gameState = STATE_GAME_INTRO;
+byte prevState = STATE_GAME_INTRO;
 
 typedef void (*FunctionPointer) ();
 

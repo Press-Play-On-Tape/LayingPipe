@@ -70,6 +70,7 @@ void levelSelect() {
     if (readEEPROM(puzzleType) > 0) {
       
   	  gameState = STATE_GAME_PUZZLE_SELECT;
+      prevState = STATE_GAME_LEVEL_SELECT;
       puzzleSelect_selectedItem = 0;
      
     }
@@ -221,8 +222,8 @@ void puzzleSelect() {
 	  }
 	  
 	  if (puzzleSelect_selectedItem == 0) {
-		  
-		  puzzleIdx = readEEPROM(puzzleType);
+
+		  puzzleIdx = (readEEPROM(puzzleType) == getNumberOfPuzzles(puzzleType) ? readEEPROM(puzzleType) -1 : readEEPROM(puzzleType));
 		  
 	  }
 	  
@@ -234,7 +235,7 @@ void puzzleSelect() {
   
   // Render menu ..
   
-  renderPuzzleOption(MENU_ITEM_2_X, MENU_ITEM_2_1_Y, "Continue Playing", (puzzleSelect_selectedItem == 0));
+  renderPuzzleOption(MENU_ITEM_2_X, MENU_ITEM_2_1_Y, (prevState == STATE_GAME_LEVEL_SELECT ? "Continue Playing" : " Restart Puzzle "), (puzzleSelect_selectedItem == 0));
   renderPuzzleOption(MENU_ITEM_2_X, MENU_ITEM_2_2_Y, "  Reset Level", (puzzleSelect_selectedItem == 1));
     
 }

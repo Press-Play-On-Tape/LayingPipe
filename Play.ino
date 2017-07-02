@@ -41,11 +41,13 @@ void play_NoSelection() {
     if (puzzleIdx == 0) {
         
       gameState = STATE_GAME_LEVEL_SELECT;
+      prevState = STATE_GAME_NO_SELECTION;
 
     }
     else {
         
       gameState = STATE_GAME_PUZZLE_SELECT;
+      prevState = STATE_GAME_NO_SELECTION;
         
     }
       
