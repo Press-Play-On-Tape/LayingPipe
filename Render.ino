@@ -1,57 +1,91 @@
-void renderBoard() { 
-//Serial.println("renderBoard()");
-//Serial.print("  player.highlightedNode.x :");
-//Serial.println(player.highlightedNode.x);
-//Serial.print("  player.highlightedNode.y :");
-//Serial.println(player.highlightedNode.y);
+void renderBoard(int xOffset, int yOffset, byte topRow) { 
+
   arduboy.clear();
+
+  // Draw stripey background ..
   
-  for (byte y = 0; y < puzzle.maximum.y; y++) {
+  for (int y = 0; y < 256; y+=3) {
+    arduboy.drawLine(y, 0, 0, y, WHITE);
+  }
+  
+
+  // Clear background of actual board ..
+  
+  arduboy.fillRect(xOffset - 3, yOffset - 3 , (puzzle.maximum.x * GRID_WIDTH) + 7, (puzzle.maximum.y * GRID_HEIGHT) + 7, BLACK);
+  arduboy.drawRect(xOffset - 2, yOffset - 2 , (puzzle.maximum.x * GRID_WIDTH) + 5, (puzzle.maximum.y * GRID_HEIGHT) + 5, WHITE);
+
+
+  // Draw placed pipes ..
+  
+  for (int y = 0; y < puzzle.maximum.y; y++) {
       
-    for (byte x = 0; x < puzzle.maximum.x; x++) {
+    for (int x = 0; x < puzzle.maximum.x; x++) {
       
       if (isPipe(x,y)) {
-        sprites.drawOverwrite(x * GRID_WIDTH, y * GRID_HEIGHT, pipes[getPipeValue(x, y)], frame);
+        
+        sprites.drawExternalMask((x * GRID_WIDTH) + xOffset, (y * GRID_HEIGHT) + yOffset, pipes[getPipeValue(x, y)], pipe_mask, frame, frame);
+//        sprites.drawOverwrite((x * GRID_WIDTH) + xOffset, (y * GRID_HEIGHT) + yOffset, pipe_mask, frame);
       }
         
     }
       
   }
+
+
+
+  // Draw placed pipes ..
   
-  for (byte y = 0; y < puzzle.maximum.y; y++) {
+  for (int y = 0; y < puzzle.maximum.y; y++) {
       
-    for (byte x = 0; x < puzzle.maximum.x; x++) {
+    for (int x = 0; x < puzzle.maximum.x; x++) {
       
       if (isNode(x, y)) {
-        sprites.drawOverwrite(x * GRID_WIDTH + 2, y * GRID_HEIGHT + 2, nodes[getNodeValue(x,y)], frame);
+        
+        sprites.drawOverwrite((x * GRID_WIDTH + 2) + xOffset, (y * GRID_HEIGHT + 2) + yOffset, nodes[getNodeValue(x,y)], frame);
+        
       }
         
     }
       
   }
-  
-  // Draw Selected cell ..
-/*
-  for (byte y = 0; y <= maze.maxY; y++) {
-    drawHorizontalLine(0, maze.maxX * GRID_WIDTH, y * GRID_HEIGHT);
-  }
-  
-  for (byte x = 0; x <= maze.maxX; x++) {
-    drawVerticalLine(x * GRID_WIDTH, 0, maze.maxY * GRID_HEIGHT);;'/l,
-  }
-*/  
 
-    for (byte y = 0; y <= puzzle.maximum.y; y++) {
-  for (byte x = 0; x <= puzzle.maximum.x; x++) {
-//    if (x > 0) arduboy.drawPixel((x * GRID_WIDTH) -2, (y * GRID_HEIGHT), WHITE);
-    arduboy.drawPixel((x * GRID_WIDTH), (y * GRID_HEIGHT), WHITE);
-//    if (x < maze.maxX) arduboy.drawPixel((x * GRID_WIDTH) + 2, (y * GRID_HEIGHT), WHITE);
-//    if (y > 0)arduboy.drawPixel((x * GRID_WIDTH), (y * GRID_HEIGHT) - 2, WHITE);
-//    if (y < maze.maxY)arduboy.drawPixel((x * GRID_WIDTH), (y * GRID_HEIGHT) + 2, WHITE);
-  }
+  
+  // Draw grid marks ..
+
+  for (int y = 0; y <= puzzle.maximum.y; y++) {
+    for (int x = 0; x <= puzzle.maximum.x; x++) {
+      arduboy.drawPixel((x * GRID_WIDTH) + xOffset, (y * GRID_HEIGHT) + yOffset, WHITE);
+    }
   }
 
   
-  arduboy.drawRect(player.highlightedNode.x * GRID_WIDTH, player.highlightedNode.y * GRID_HEIGHT, GRID_WIDTH + 1, GRID_HEIGHT + 1, WHITE);
+  // Draw selected cell ..
+  
+  arduboy.drawRect((player.highlightedNode.x * GRID_WIDTH) + xOffset, (player.highlightedNode.y * GRID_HEIGHT) + yOffset, GRID_WIDTH + 1, GRID_HEIGHT + 1, WHITE);
 
+
+  // Draw scrollbar if one is needed ..
+
+  if (puzzle.scrollbar.width > 0) {
+    
+    arduboy.fillRect(puzzle.scrollbar.x - 1, puzzle.scrollbar.y, puzzle.scrollbar.width + 1, puzzle.scrollbar.height, BLACK);
+    arduboy.drawRect(puzzle.scrollbar.x, puzzle.scrollbar.y, puzzle.scrollbar.width, puzzle.scrollbar.height, WHITE);
+    arduboy.fillRect(puzzle.scrollbar.x + 2, puzzle.scrollbar.y + 6 + (topRow * puzzle.scrollbar.slider.unit), puzzle.scrollbar.width - 4, puzzle.scrollbar.slider.overall, WHITE);
+
+
+    // Top arrow ..
+    
+    arduboy.drawPixel(puzzle.scrollbar.x + 4, puzzle.scrollbar.y + 2, WHITE);
+    arduboy.drawLine(puzzle.scrollbar.x + 3, puzzle.scrollbar.y + 3, puzzle.scrollbar.x + 5, puzzle.scrollbar.y + 3, WHITE);
+    arduboy.drawLine(puzzle.scrollbar.x + 2, puzzle.scrollbar.y + 4, puzzle.scrollbar.x + 6, puzzle.scrollbar.y + 4, WHITE);
+
+
+    // Bottom arrow ..
+    
+    arduboy.drawLine(puzzle.scrollbar.x + 2, puzzle.scrollbar.y + puzzle.scrollbar.height - 5, puzzle.scrollbar.x + 6, puzzle.scrollbar.y + puzzle.scrollbar.height - 5, WHITE);
+    arduboy.drawLine(puzzle.scrollbar.x + 3, puzzle.scrollbar.y + puzzle.scrollbar.height - 4, puzzle.scrollbar.x + 5, puzzle.scrollbar.y + puzzle.scrollbar.height - 4, WHITE);
+    arduboy.drawPixel(puzzle.scrollbar.x + 4, puzzle.scrollbar.y + puzzle.scrollbar.height - 3, WHITE);
+
+  }
+    
 }

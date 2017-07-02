@@ -36,7 +36,50 @@ void play_NoSelection() {
 
   }
 
-  renderBoard();
+  if (arduboy.justPressed(B_BUTTON)) {
+
+    if (puzzleIdx == 0) {
+        
+      gameState = STATE_GAME_LEVEL_SELECT;
+
+    }
+    else {
+        
+      gameState = STATE_GAME_PUZZLE_SELECT;
+        
+    }
+      
+  }
+  
+  renderBoard(puzzle.offset.x, puzzle.offset.y - calculateTopRow() * GRID_HEIGHT, calculateTopRow());
+  
+}
+
+byte calculateTopRow() {
+
+  byte topRow = 0;
+
+  if (player.highlightedNode.y <= 2) {
+
+    topRow = 0;
+
+  }
+  else {
+
+    if (player.highlightedNode.y>=3 && player.highlightedNode.y <= puzzle.maximum.y - 4) { 
+
+      topRow = player.highlightedNode.y - 2; 
+
+    }
+    else {
+    
+      topRow = (puzzle.maximum.y - 5 >= 0 ? puzzle.maximum.y - 5 : 0); 
+
+    }
+
+  }
+
+  return topRow;
   
 }
 
@@ -349,7 +392,16 @@ void play_NodeSelected() {
 
   }
 
-  renderBoard();
+  if (arduboy.justPressed(B_BUTTON)) {
+
+    clearBoard(player.selectedNode.value);
+    clearSelection();
+    gameState = STATE_GAME_NO_SELECTION;
+      
+  }
+
+
+  renderBoard(puzzle.offset.x, puzzle.offset.y - calculateTopRow() * GRID_HEIGHT, calculateTopRow());
   
 }
 

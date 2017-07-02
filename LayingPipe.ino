@@ -3,8 +3,6 @@
 #include "Puzzles.h"
 #include <ArduboyTones.h>
 
-#define DEBUG
-
 #define NOTHING                 0
 #define PIPE_HORIZONTAL_LR      1
 #define PIPE_HORIZONTAL_RL      2
@@ -53,13 +51,30 @@ player =
     {0, 0, 0}, 
     {0, 0, 0} 
   };
-  
+
+struct Slider {
+  byte unit;  
+  byte overall;  
+};
+
+struct Scrollbar {
+  byte x;
+  byte y;  
+  byte width;  
+  byte height;  
+  Slider slider;  
+};
+
 struct Puzzle {
   Node maximum;
+  Node offset;
+  Scrollbar scrollbar;
   byte board[9][9];
-} 
+}
 puzzle = 
   { {0, 0}, 
+    {0, 0}, 
+    {0, 0, 0, 0, {0, 0} }, 
     {
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -91,7 +106,7 @@ void setup() {
 
   if (!isEEPROMInitialised()) { initEEPROM(); }
 
-  arduboy.begin();
+  arduboy.boot();
   arduboy.setFrameRate(30);
   arduboy.clear();
   arduboy.audio.begin();

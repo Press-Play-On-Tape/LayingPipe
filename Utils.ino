@@ -11,15 +11,23 @@ byte rightValue(byte val) {
 }
 
 void initBoard(byte puzzleType, byte puzzleNumber) {
-
-  puzzle.maximum.x = puzzle.maximum.y = puzzleType;
   
   byte x = 0;
   byte y = 0;
   byte z = 0;
   
   byte bytesToRead = (puzzleType % 2 == 0 ? (puzzleType / 2) * puzzleType : ((puzzleType / 2) + 1) * puzzleType);
-	
+
+  puzzle.maximum.x = puzzle.maximum.y = puzzleType;
+  puzzle.offset.x = pgm_read_byte(&puzzles_details[(puzzleType - 5) * 8]);
+  puzzle.offset.y = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 1]);
+  puzzle.scrollbar.x = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 2]);
+  puzzle.scrollbar.y = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 3]);
+  puzzle.scrollbar.width = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 4]);
+  puzzle.scrollbar.height = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 5]);
+  puzzle.scrollbar.slider.unit = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 6]);
+  puzzle.scrollbar.slider.overall = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 7]);
+
   for (byte i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
 
   	switch (puzzleType) {
@@ -27,13 +35,21 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
   	  case PUZZLE_5X5:
   		  z = pgm_read_byte(&puzzles_5x5[i]);
   		  break;
+        
+      case PUZZLE_6X6:
+        z = pgm_read_byte(&puzzles_6x6[i]);
+        break;
+        
+      case PUZZLE_7X7:
+        z = pgm_read_byte(&puzzles_7x7[i]);
+        break;
+        
+      case PUZZLE_8X8:
+        z = pgm_read_byte(&puzzles_8x8[i]);
+        break;
   		  
-    	  case PUZZLE_7X7:
-  		  z = puzzles_7x7[i];
-  		  break;
-  		  
-    	  case PUZZLE_9X9:
-  		  z = puzzles_9x9[i];
+  	  case PUZZLE_9X9:
+  		  z = pgm_read_byte(&puzzles_9x9[i]);
   		  break;
   
   	}
@@ -216,6 +232,16 @@ void clearSelection() {
   player.selectedNode.value = 0;
   player.selectedNode.x = 0;
   player.selectedNode.y = 0;
+
+}
+
+void clearHighlightAndSelection() {
+
+  player.selectedNode.value = 0;
+  player.selectedNode.x = 0;
+  player.selectedNode.y = 0;
+  player.highlightedNode.x = 0;
+  player.highlightedNode.y = 0;
 
 }
 

@@ -79,7 +79,7 @@ bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool 
 
   while (i >= 0) {
 
-    if (arduboy.justPressed(A_BUTTON)) { Serial.println("a1"); return true; }
+    if (arduboy.justPressed(A_BUTTON)) { return true; }
 
     if (arduboy.justPressed(B_BUTTON)) { 
 

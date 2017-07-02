@@ -20,6 +20,8 @@ byte puzzleSelect_selectedItem = 0;
 
 void levelSelect() {
 
+  clearHighlightAndSelection();
+
   arduboy.clear();
   
   sprites.drawOverwrite(-2, -2, logo_elbow_RB, frame);
@@ -64,7 +66,18 @@ void levelSelect() {
 	  
 	  puzzleType = levels[levelSelect_selectedItem];
 	  puzzleIdx = 0;
-	  gameState = STATE_GAME_PUZZLE_SELECT;
+
+    if (readEEPROM(puzzleType) > 0) {
+      
+  	  gameState = STATE_GAME_PUZZLE_SELECT;
+      puzzleSelect_selectedItem = 0;
+     
+    }
+    else {
+      
+      gameState = STATE_GAME_INIT_GAME;
+      
+    }
 	  
   }
   
@@ -79,16 +92,11 @@ void levelSelect() {
   else {
 
     if (levelSelect_selectedItem > sizeof(levels) - levelSelect_noOfItem + 1) {
-Serial.println("b");
-Serial.print(sizeof(levels) );
-Serial.print(" ");
-Serial.print(levelSelect_noOfItem);
 
       levelSelect_topItem = sizeof(levels) - levelSelect_noOfItem;
 
   	}
   	else {
-Serial.println("c");
    
       levelSelect_topItem = levelSelect_selectedItem - 1;
           
@@ -163,6 +171,8 @@ void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
 
 void puzzleSelect() {
 
+  clearHighlightAndSelection();
+
   arduboy.clear();
  
   sprites.drawOverwrite(-2, -2, logo_elbow_RB, frame);
@@ -210,7 +220,7 @@ void puzzleSelect() {
       
 	  }
 	  
-	  if (puzzleSelect_selectedItem == 1) {
+	  if (puzzleSelect_selectedItem == 0) {
 		  
 		  puzzleIdx = readEEPROM(puzzleType);
 		  
