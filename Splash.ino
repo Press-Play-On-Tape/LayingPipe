@@ -49,18 +49,15 @@ void drawSplash() {
 
   skipSplash = splashDelay(200, skipSplash);
 
-  arduboy.setTextSize(2);
-  arduboy.setCursor(22, 10);
-  arduboy.print("Laying");
-  arduboy.setCursor(50, 36);
-  arduboy.print("Pipe");
+  arduboy.fillRect(19, 18, 92, 30, BLACK);
+  drawHorizontalDottedLine(20, 110, 19);
+  drawHorizontalDottedLine(20, 110, 46);
+  sprites.drawOverwrite(23, 21, logo, frame);
   arduboy.display();
-  arduboy.setTextSize(1);
 
 
-  skipSplash = splashDelay(1000, skipSplash);
+  if (!skipSplash) splashWaitForever();
 
-  
   gameState = STATE_GAME_LEVEL_SELECT;
   
 }
@@ -119,6 +116,27 @@ bool splashDelay(int delayLength, bool skip) {
   }
 
   return false;
+  
+}
+
+
+void splashWaitForever() {
+
+  arduboy.pollButtons();
+
+  while (true) {
+
+    if (arduboy.pressed(A_BUTTON)) { break; }
+
+    if (arduboy.pressed(B_BUTTON)) { 
+
+      toggleSoundSettings();
+        
+    }
+    
+    arduboy.delayShort(5);  
+
+  }
   
 }
 

@@ -24,7 +24,7 @@ void renderBoard(int xOffset, int yOffset, byte topRow) {
       if (isPipe(x,y)) {
         
         sprites.drawExternalMask((x * GRID_WIDTH) + xOffset, (y * GRID_HEIGHT) + yOffset, pipes[getPipeValue(x, y)], pipe_mask, frame, frame);
-//        sprites.drawOverwrite((x * GRID_WIDTH) + xOffset, (y * GRID_HEIGHT) + yOffset, pipe_mask, frame);
+
       }
         
     }

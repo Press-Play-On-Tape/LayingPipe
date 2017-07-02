@@ -130,13 +130,15 @@ void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
   
   	case PUZZLE_5X5:
   		arduboy.print("Practice  ");
-  		arduboy.print(readEEPROM(PUZZLE_5X5));
+      arduboy.print(readEEPROM(PUZZLE_5X5) < 10 ? " " : "");
+      arduboy.print(readEEPROM(PUZZLE_5X5));
   		arduboy.print("/");
   		arduboy.print(puzzles_5x5_count);
   		break;
   	  
   	case PUZZLE_6X6:
   		arduboy.print("Easy      ");
+      arduboy.print(readEEPROM(PUZZLE_6X6) < 10 ? " " : "");
   		arduboy.print(readEEPROM(PUZZLE_6X6));
       arduboy.print("/");
   		arduboy.print(puzzles_6x6_count);
@@ -144,6 +146,7 @@ void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
   	  
   	case PUZZLE_7X7:
   		arduboy.print("Medium    ");
+      arduboy.print(readEEPROM(PUZZLE_7X7) < 10 ? " " : "");
   		arduboy.print(readEEPROM(PUZZLE_7X7));
       arduboy.print("/");
   		arduboy.print(puzzles_7x7_count);
@@ -151,6 +154,7 @@ void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
   	  
   	case PUZZLE_8X8:
   		arduboy.print("Hard      ");
+      arduboy.print(readEEPROM(PUZZLE_8X8) < 10 ? " " : "");
   		arduboy.print(readEEPROM(PUZZLE_8X8));
       arduboy.print("/");
   		arduboy.print(puzzles_8x8_count);
@@ -158,6 +162,7 @@ void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
   	  
   	case PUZZLE_9X9:
   		arduboy.print("Extreme   ");
+      arduboy.print(readEEPROM(PUZZLE_9X9) < 10 ? " " : "");
   		arduboy.print(readEEPROM(PUZZLE_9X9));
   		arduboy.print("/");
   		arduboy.print(puzzles_9x9_count);

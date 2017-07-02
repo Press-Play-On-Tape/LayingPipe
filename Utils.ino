@@ -305,3 +305,16 @@ void toggleSoundSettings() {
     
 }
 
+/* ----------------------------------------------------------------------------
+ *  Draw a horizontal dotted line. 
+ *  
+ *  So much nicer than a solid line!
+ *  
+ */
+void drawHorizontalDottedLine(int x1, int x2, int y) {
+
+  for (int x3 = x1; x3 <= x2; x3+=2) {
+    arduboy.drawPixel(x3, y, WHITE);
+  }
+  
+}
