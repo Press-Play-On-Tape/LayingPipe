@@ -5,6 +5,7 @@ void drawSplash() {
   bool skipSplash = false;
   
   arduboy.clear(); 
+  sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
   arduboy.display();
     
   skipSplash = splashAnimation(112,  0, logo_straight_TB_noflange, frame, skipSplash);
@@ -107,6 +108,7 @@ bool splashDelay(int delayLength, bool skip) {
     if (arduboy.justPressed(B_BUTTON)) { 
 
     	toggleSoundSettings();
+      sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
         
     }
     
