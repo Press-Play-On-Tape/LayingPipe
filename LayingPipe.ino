@@ -7,7 +7,7 @@
 #include "Puzzles.h"
 #include <ArduboyTones.h>
 
-#define SCREENSHOT
+#define NO_SCREENSHOTS
 
 #define NOTHING                 0
 #define PIPE_HORIZONTAL_LR      1

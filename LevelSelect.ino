@@ -118,7 +118,7 @@ void levelSelect() {
   renderLevelDetail(MENU_ITEM_3_X, MENU_ITEM_3_1_Y, levels[levelSelect_topItem], (levelSelect_topItem == levelSelect_selectedItem));
   renderLevelDetail(MENU_ITEM_3_X, MENU_ITEM_3_2_Y, levels[levelSelect_topItem + 1], (levelSelect_topItem + 1 == levelSelect_selectedItem));
   renderLevelDetail(MENU_ITEM_3_X, MENU_ITEM_3_3_Y, levels[levelSelect_topItem + 2], (levelSelect_topItem + 2 == levelSelect_selectedItem));
-    
+
 }
 
 

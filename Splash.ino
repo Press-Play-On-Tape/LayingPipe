@@ -64,10 +64,6 @@ void drawSplash() {
   sprites.drawOverwrite(23, 21, logo, frame);
   arduboy.display();
 
-#ifdef SCREENSHOTS
-  //screenShot();
-#endif
-
   if (!skipSplash) splashWaitForever();
 
   gameState = STATE_GAME_LEVEL_SELECT;

@@ -30,10 +30,10 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
   byte bytesToRead = (puzzleType % 2 == 0 ? (puzzleType / 2) * puzzleType : ((puzzleType / 2) + 1) * puzzleType);
 
   puzzle.maximum.x = puzzle.maximum.y = puzzleType;
-  puzzle.offset.x = pgm_read_byte(&puzzles_details[(puzzleType - 5) * 8]);
-  puzzle.offset.y = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 1]);
-  puzzle.slider.unit = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 2]);
-  puzzle.slider.overall = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 3]);
+  puzzle.offset.x = pgm_read_byte(&puzzles_details[(puzzleType - 5) * 4]);
+  puzzle.offset.y = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 4) + 1]);
+  puzzle.slider.unit = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 4) + 2]);
+  puzzle.slider.overall = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 4) + 3]);
 
   for (int i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
 
@@ -307,4 +307,8 @@ void screenShot() {
   arduboy.delayShort(1000);
 }
 
+#endif
+
+#ifdef SCREENSHOTS
+//  screenShot();
 #endif
