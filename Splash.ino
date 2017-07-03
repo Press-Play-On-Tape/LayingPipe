@@ -58,13 +58,17 @@ void drawSplash() {
 
   skipSplash = splashDelay(200, skipSplash);
 
-  arduboy.fillRect(19, 18, 92, 30, BLACK);
-  drawHorizontalDottedLine(20, 110, 19);
-  drawHorizontalDottedLine(20, 110, 46);
-  sprites.drawOverwrite(23, 21, logo, frame);
-  arduboy.display();
+  if (!skipSplay) {
 
-  if (!skipSplash) splashWaitForever();
+    arduboy.fillRect(19, 18, 92, 30, BLACK);
+    drawHorizontalDottedLine(20, 110, 19);
+    drawHorizontalDottedLine(20, 110, 46);
+    sprites.drawOverwrite(23, 21, logo, frame);
+    arduboy.display();
+
+    splashWaitForever();
+    
+  }
 
   gameState = STATE_GAME_LEVEL_SELECT;
   
