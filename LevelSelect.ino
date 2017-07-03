@@ -15,9 +15,13 @@
 
 byte levelSelect_selectedItem = 0;
 byte levelSelect_topItem = 0;
-byte levelSelect_noOfItem = 3;
+byte levelSelect_noOfItems = 3;
 byte puzzleSelect_selectedItem = 0;
 
+
+/* ----------------------------------------------------------------------------
+ *   Handle the scolling and selection of the levels.  
+ */
 void levelSelect() {
 
   clearHighlightAndSelection();
@@ -57,17 +61,20 @@ void levelSelect() {
   sprites.drawOverwrite(114, 52, logo_elbow_TL, frame);
 
 
-  
   if (arduboy.justPressed(UP_BUTTON) && levelSelect_selectedItem > 0) 					            { levelSelect_selectedItem--; }
   if (arduboy.justPressed(DOWN_BUTTON) && levelSelect_selectedItem < sizeof(levels) - 1) 	  { levelSelect_selectedItem++; }
   if (arduboy.justPressed(B_BUTTON)) 												                                { gameState = STATE_GAME_INTRO; }
   
   if (arduboy.justPressed(A_BUTTON)) { 
 	  
-	  puzzleType = levels[levelSelect_selectedItem];
-	  puzzleIdx = 0;
+	  puzzle.level = levels[levelSelect_selectedItem];
+	  puzzle.index = 0;
 
-    if (readEEPROM(puzzleType) > 0) {
+
+    // If the player has completed some puzzles, give them the option to restart  
+    // the level or puzzle.  Otherwise simply start the puzzle ..
+    
+    if (readEEPROM(puzzle.level) > 0) {
       
   	  gameState = STATE_GAME_PUZZLE_SELECT;
       prevState = STATE_GAME_LEVEL_SELECT;
@@ -85,16 +92,16 @@ void levelSelect() {
   
   // Adjust the top menu item based on selected item ..
   
-  if (levelSelect_selectedItem < levelSelect_noOfItem - 1) {
+  if (levelSelect_selectedItem < levelSelect_noOfItems - 1) {
 
 	  levelSelect_topItem = 0;
 
   }
   else {
 
-    if (levelSelect_selectedItem > sizeof(levels) - levelSelect_noOfItem + 1) {
+    if (levelSelect_selectedItem > sizeof(levels) - levelSelect_noOfItems + 1) {
 
-      levelSelect_topItem = sizeof(levels) - levelSelect_noOfItem;
+      levelSelect_topItem = sizeof(levels) - levelSelect_noOfItems;
 
   	}
   	else {
@@ -114,6 +121,10 @@ void levelSelect() {
     
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Render a single level menu item.  
+ */
 void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
 
   if (highlight) {
@@ -175,6 +186,13 @@ void renderLevelDetail(byte x, byte y, byte level, byte highlight) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *   Handle the puzzle select menu.  
+ *   
+ *   Users can simply restart the level or continue playing.  If this screen
+ *   was accessed via the 'level select' screen the "Continue Playing" message  
+ *   is shown otherwise the "Restart Puzzle" message is displayed.
+ */
 void puzzleSelect() {
 
   clearHighlightAndSelection();
@@ -221,14 +239,17 @@ void puzzleSelect() {
 	  
 	  if (puzzleSelect_selectedItem == 1) {
 		  
-		  puzzleIdx = 0;
-      updateEEPROM(puzzleType, puzzleIdx);
-      
+		  puzzle.index = 0;
+      updateEEPROM(puzzle.level, puzzle.index);
+           
 	  }
 	  
 	  if (puzzleSelect_selectedItem == 0) {
 
-		  puzzleIdx = (readEEPROM(puzzleType) == getNumberOfPuzzles(puzzleType) ? readEEPROM(puzzleType) -1 : readEEPROM(puzzleType));
+
+      // If all puzzles in the current level are completed, simply re-show the last puzzle ..
+      
+		  puzzle.index = (readEEPROM(puzzle.level) == getNumberOfPuzzles(puzzle.level) ? readEEPROM(puzzle.level) -1 : readEEPROM(puzzle.level));
 		  
 	  }
 	  
@@ -246,13 +267,16 @@ void puzzleSelect() {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *   Render a single puzzle menu item.  
+ */
 void renderPuzzleOption(byte x, byte y, String message, byte highlight) {
 
   if (highlight) {
 	  
-	arduboy.setTextColor(BLACK);
-	arduboy.setTextBackground(WHITE);
-	arduboy.fillRect(x - 1, y - 2, MENU_ITEM_2_WIDTH, MENU_ITEM_2_HEIGHT, WHITE);
+	  arduboy.setTextColor(BLACK);
+	  arduboy.setTextBackground(WHITE);
+	  arduboy.fillRect(x - 1, y - 2, MENU_ITEM_2_WIDTH, MENU_ITEM_2_HEIGHT, WHITE);
 	  
   }
 	

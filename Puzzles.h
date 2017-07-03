@@ -1,18 +1,9 @@
-// x offset
-// y offset
-// scrollbar x
-// scrollbar y
-// scrollbar width
-// scrollbar height
-// scrollbar slider unit height
-// scrollbar slider overall height
-
 const byte PROGMEM puzzles_details[] = {
-  36, 4, 0, 0, 0, 0, 0, 0,    // 5x5
-  27, 4, 119, 0, 9, 64, 10, 42,   // 6x6
-  21, 4, 119, 0, 9, 64, 8, 36,    // 7x7
-  16, 4, 119, 0, 9, 64, 7, 31,    // 8x8
-  10, 4, 119, 0, 9, 64, 6, 28,    // 9x9
+  36, 4, 0, 0,     // 5x5
+  27, 4, 10, 42,   // 6x6
+  21, 4, 8, 36,    // 7x7
+  16, 4, 7, 31,    // 8x8
+  10, 4, 6, 28,    // 9x9
 };
 
 const byte puzzles_5x5_count = 10;

@@ -1,11 +1,23 @@
+/* ----------------------------------------------------------------------------
+ *   Initialise the game based on the selected level and puzzle numbers.
+ */
 void play_InitGame() {
 
   arduboy.clear();
-  initBoard(puzzleType, puzzleIdx);
+  initBoard(puzzle.level, puzzle.index);
   gameState = STATE_GAME_NO_SELECTION;
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Handle the game play before the user selects a node.
+ *   
+ *   The user can scroll to any node on the board using the directional arrows.
+ *   Clicking the A button on a node selects it.  Clicking the B button returns
+ *   the user to the level select (if currently on the first puzzle) or the 
+ *   puzzle select screen (if they are currently working on a puzzle).
+ */
 void play_NoSelection() {
 
   if (arduboy.justPressed(LEFT_BUTTON) && player.highlightedNode.x > 0)                         { player.highlightedNode.x--; }
@@ -30,7 +42,7 @@ void play_NoSelection() {
       player.selectedNode.x = player.highlightedNode.x;
       player.selectedNode.y = player.highlightedNode.y;
       gameState = STATE_GAME_NODE_SELECTED;
-      playSelectNode();
+      playSelectNodeTune();
 
     }
 
@@ -38,7 +50,7 @@ void play_NoSelection() {
 
   if (arduboy.justPressed(B_BUTTON)) {
 
-    if (puzzleIdx == 0) {
+    if (puzzle.index == 0) {
         
       gameState = STATE_GAME_LEVEL_SELECT;
       prevState = STATE_GAME_NO_SELECTION;
@@ -57,6 +69,13 @@ void play_NoSelection() {
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Calculate the top row of the puzzle to render.
+ *   
+ *   Games greater than 5 x 5 cannot be rendered on the screen completely.  The
+ *   top row to display is calculated based on the player's highlighted cell.
+ */
 byte calculateTopRow() {
 
   byte topRow = 0;
@@ -85,6 +104,16 @@ byte calculateTopRow() {
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Handle the game play after the user selects a node.
+ *   
+ *   The user can only navigate through empty cells or onto the node that matches
+ *   the one previously selected.  They can also back-track along the pipe they
+ *   have already layed.
+ *   
+ *   Pressing the B button will clear the pipe that is currently being layed.
+ */
 void play_NodeSelected() {
 
   if (arduboy.justPressed(LEFT_BUTTON)) {
@@ -145,7 +174,7 @@ void play_NodeSelected() {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
-        playMatchTune();
+        playMatchNodeTune();
  
 
         // Is the level finished ?
@@ -222,7 +251,7 @@ void play_NodeSelected() {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
-        playMatchTune();
+        playMatchNodeTune();
   
 
         // Is the level finished ?
@@ -299,7 +328,7 @@ void play_NodeSelected() {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
-        playMatchTune();
+        playMatchNodeTune();
  
 
         // Is the level finished ?
@@ -375,7 +404,7 @@ void play_NodeSelected() {
     
         clearSelection();
         gameState = STATE_GAME_NO_SELECTION;
-        playMatchTune();
+        playMatchNodeTune();
 
 
         // Is the level finished ?
@@ -440,3 +469,91 @@ void updatePipeWhenReversing(byte x, byte y) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *   Is the nominated move valid?
+ *   
+ *   The user can only navigate through empty cells or onto the node that matches
+ *   the one previously selected.  They can also back-track along the pipe they
+ *   have already layed.
+ *   
+ *   direction:     The button the user clicked, eg. UP, DOWN, LEFT and Right.
+ *   selectedNode:  The node previously selected.
+ *   x and y:       Coordinates to test.
+ */
+bool validMove(byte direction, Node selectedNode, byte x, byte y) {
+
+  
+  // Off the grid!
+
+  if (x < 0 || x >= puzzle.maximum.x || y < 0 || y >= puzzle.maximum.y) return false;
+  
+  
+  // Is it a clear cell or the matching node?
+  
+  if (
+      (!isNode(x,y) && getPipeValue(x,y) == NOTHING) ||
+      (isNode(x,y) && getNodeValue(x,y) == selectedNode.value && (x != selectedNode.x || y != selectedNode.y))
+     ) return true;
+  
+
+  // Is the pipe turning back on itself?
+
+  switch (direction) {
+
+    case (UP):
+    
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
+
+        case PIPE_VERTICAL_TB:
+        case PIPE_CORNER_RB:
+        case PIPE_CORNER_LB:
+          return true;
+
+      }
+
+      break;
+      
+    case (DOWN):
+    
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
+          
+        case PIPE_VERTICAL_BT:
+        case PIPE_CORNER_LT:
+        case PIPE_CORNER_RT:
+          return true;
+
+      }
+
+      break;
+
+    case (LEFT):
+    
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
+   
+        case PIPE_CORNER_TR:
+        case PIPE_CORNER_BR:
+        case PIPE_HORIZONTAL_LR:
+          return true;
+
+      }
+
+      break;
+
+    case (RIGHT):
+    
+      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
+
+        case PIPE_CORNER_TL:
+        case PIPE_CORNER_BL:
+        case PIPE_HORIZONTAL_RL:
+          return true;
+
+      }
+
+      break;
+
+  }
+  
+  return false;
+  
+}

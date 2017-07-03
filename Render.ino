@@ -1,6 +1,15 @@
+#define SCROLLBAR_X          119
+#define SCROLLBAR_Y          0
+#define SCROLLBAR_WIDTH      9
+#define SCROLLBAR_HEIGHT     64
+
+/* ----------------------------------------------------------------------------
+ *   Render the board.
+ */
 void renderBoard(int xOffset, int yOffset, byte topRow) { 
 
   arduboy.clear();
+
 
   // Draw stripey background ..
   
@@ -66,25 +75,25 @@ void renderBoard(int xOffset, int yOffset, byte topRow) {
 
   // Draw scrollbar if one is needed ..
 
-  if (puzzle.scrollbar.width > 0) {
+  if (puzzle.slider.unit > 0) {
     
-    arduboy.fillRect(puzzle.scrollbar.x - 1, puzzle.scrollbar.y, puzzle.scrollbar.width + 1, puzzle.scrollbar.height, BLACK);
-    arduboy.drawRect(puzzle.scrollbar.x, puzzle.scrollbar.y, puzzle.scrollbar.width, puzzle.scrollbar.height, WHITE);
-    arduboy.fillRect(puzzle.scrollbar.x + 2, puzzle.scrollbar.y + 6 + (topRow * puzzle.scrollbar.slider.unit), puzzle.scrollbar.width - 4, puzzle.scrollbar.slider.overall, WHITE);
+    arduboy.fillRect(SCROLLBAR_X - 1, SCROLLBAR_Y, SCROLLBAR_WIDTH + 1, SCROLLBAR_HEIGHT, BLACK);
+    arduboy.drawRect(SCROLLBAR_X, SCROLLBAR_Y, SCROLLBAR_WIDTH, SCROLLBAR_HEIGHT, WHITE);
+    arduboy.fillRect(SCROLLBAR_X + 2, SCROLLBAR_Y + 6 + (topRow * puzzle.slider.unit), SCROLLBAR_WIDTH - 4, puzzle.slider.overall, WHITE);
 
 
     // Top arrow ..
     
-    arduboy.drawPixel(puzzle.scrollbar.x + 4, puzzle.scrollbar.y + 2, WHITE);
-    arduboy.drawLine(puzzle.scrollbar.x + 3, puzzle.scrollbar.y + 3, puzzle.scrollbar.x + 5, puzzle.scrollbar.y + 3, WHITE);
-    arduboy.drawLine(puzzle.scrollbar.x + 2, puzzle.scrollbar.y + 4, puzzle.scrollbar.x + 6, puzzle.scrollbar.y + 4, WHITE);
+    arduboy.drawPixel(SCROLLBAR_X + 4, SCROLLBAR_Y + 2, WHITE);
+    arduboy.drawLine(SCROLLBAR_X + 3, SCROLLBAR_Y + 3, SCROLLBAR_X + 5, SCROLLBAR_Y + 3, WHITE);
+    arduboy.drawLine(SCROLLBAR_X + 2, SCROLLBAR_Y + 4, SCROLLBAR_X + 6, SCROLLBAR_Y + 4, WHITE);
 
 
     // Bottom arrow ..
     
-    arduboy.drawLine(puzzle.scrollbar.x + 2, puzzle.scrollbar.y + puzzle.scrollbar.height - 5, puzzle.scrollbar.x + 6, puzzle.scrollbar.y + puzzle.scrollbar.height - 5, WHITE);
-    arduboy.drawLine(puzzle.scrollbar.x + 3, puzzle.scrollbar.y + puzzle.scrollbar.height - 4, puzzle.scrollbar.x + 5, puzzle.scrollbar.y + puzzle.scrollbar.height - 4, WHITE);
-    arduboy.drawPixel(puzzle.scrollbar.x + 4, puzzle.scrollbar.y + puzzle.scrollbar.height - 3, WHITE);
+    arduboy.drawLine(SCROLLBAR_X + 2, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 5, SCROLLBAR_X + 6, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 5, WHITE);
+    arduboy.drawLine(SCROLLBAR_X + 3, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 4, SCROLLBAR_X + 5, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 4, WHITE);
+    arduboy.drawPixel(SCROLLBAR_X + 4, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 3, WHITE);
 
   }
     

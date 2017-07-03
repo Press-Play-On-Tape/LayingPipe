@@ -1,15 +1,26 @@
+/* ----------------------------------------------------------------------------
+ *  Return the upper 4 bits of a byte.
+ */
 byte leftValue(byte val) {
 
   return val >> 4; 
       
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Return the lower 4 bits of a byte.
+ */
 byte rightValue(byte val) {
 
   return val & 0x0F; 
       
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Initialise the board.
+ */
 void initBoard(byte puzzleType, byte puzzleNumber) {
 
   byte x = 0;
@@ -21,12 +32,8 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
   puzzle.maximum.x = puzzle.maximum.y = puzzleType;
   puzzle.offset.x = pgm_read_byte(&puzzles_details[(puzzleType - 5) * 8]);
   puzzle.offset.y = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 1]);
-  puzzle.scrollbar.x = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 2]);
-  puzzle.scrollbar.y = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 3]);
-  puzzle.scrollbar.width = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 4]);
-  puzzle.scrollbar.height = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 5]);
-  puzzle.scrollbar.slider.unit = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 6]);
-  puzzle.scrollbar.slider.overall = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 7]);
+  puzzle.slider.unit = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 2]);
+  puzzle.slider.overall = pgm_read_byte(&puzzles_details[((puzzleType - 5) * 8) + 3]);
 
   for (int i = (puzzleNumber * bytesToRead); i < ((puzzleNumber + 1) * bytesToRead); i++) {
 
@@ -81,17 +88,21 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *  Has the node already been played?
+ */
 bool nodeAlreadyPlayed(byte value) { 
 
-    for (byte y = 0; y < puzzle.maximum.y; y++) {
+  for (byte y = 0; y < puzzle.maximum.y; y++) {
+    
+    for (byte x = 0; x < puzzle.maximum.x; x++) {
       
-      for (byte x = 0; x < puzzle.maximum.x; x++) {
-        if (getNodeValue(x, y) == value && !isNode(x, y)) {
-          
-          return true;
-          
-        }
+      if (getNodeValue(x, y) == value && !isNode(x, y)) {
         
+        return true;
+        
+      }
+      
     }
       
   }
@@ -100,6 +111,10 @@ bool nodeAlreadyPlayed(byte value) {
     
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Clear the board of pipes for a certain node value.
+ */
 bool clearBoard(byte nodeValue) {
 
   for (byte y = 0; y < puzzle.maximum.y; y++) {
@@ -118,6 +133,10 @@ bool clearBoard(byte nodeValue) {
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Is the position nominated a node?
+ */
 bool isNode(byte x, byte y) {
 
   return (puzzle.board[y][x] & 0xF0) == 0xF0;
@@ -125,108 +144,49 @@ bool isNode(byte x, byte y) {
 }
 
 
-bool isPipe(byte x, byte y) {
-
-  return (puzzle.board[y][x] & 0xF0) > 0x00 && (puzzle.board[y][x] & 0xF0) != 0xF0;
-  
-}
-
+/* ----------------------------------------------------------------------------
+ *  Get the node value for the position.
+ */
 byte getNodeValue(byte x, byte y) {
   
   return (puzzle.board[y][x] & 0x0F);
 
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Is the position nominated a pipe?
+ */
+bool isPipe(byte x, byte y) {
+
+  return (puzzle.board[y][x] & 0xF0) > 0x00 && (puzzle.board[y][x] & 0xF0) != 0xF0;
+  
+}
+
+
+/* ----------------------------------------------------------------------------
+ *  Get the pipe value for the position.
+ */
 byte getPipeValue(byte x, byte y) {
   
   return (puzzle.board[y][x] & 0xF0) >> 4;
 
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Set the pipe value for the position.
+ */
 void setPipeValue(byte x, byte y, byte pipeValue, byte nodeValue) {
   
   puzzle.board[y][x] = (pipeValue << 4) | nodeValue;
   
 }
 
-bool validMove(byte direction, Node selectedNode, byte x, byte y) {
 
-	
-  // Off the grid!
-
-  if (x < 0 || x >= puzzle.maximum.x || y < 0 || y >= puzzle.maximum.y) return false;
-  
-  
-  // Is it a clear cell or the matching node?
-  
-  if (
-      (!isNode(x,y) && getPipeValue(x,y) == NOTHING) ||
-      (isNode(x,y) && getNodeValue(x,y) == selectedNode.value && (x != selectedNode.x || y != selectedNode.y))
-     ) return true;
-  
-
-  // Is the pipe turning back on itself?
-
-  switch (direction) {
-
-    case (UP):
-    
-      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
-
-        case PIPE_VERTICAL_TB:
-        case PIPE_CORNER_RB:
-        case PIPE_CORNER_LB:
-          return true;
-
-      }
-
-      break;
-      
-    case (DOWN):
-    
-      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
-          
-        case PIPE_VERTICAL_BT:
-        case PIPE_CORNER_LT:
-        case PIPE_CORNER_RT:
-          return true;
-
-      }
-
-      break;
-
-    case (LEFT):
-    
-      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
-   
-        case PIPE_CORNER_TR:
-        case PIPE_CORNER_BR:
-        case PIPE_HORIZONTAL_LR:
-          return true;
-
-      }
-
-      break;
-
-    case (RIGHT):
-    
-      switch (getPipeValue(player.highlightedNode.x, player.highlightedNode.y)) {
-
-        case PIPE_CORNER_TL:
-        case PIPE_CORNER_BL:
-        case PIPE_HORIZONTAL_RL:
-          return true;
-
-      }
-
-      break;
-
-  }
-  
-  return false;
-  
-}
-
+/* ----------------------------------------------------------------------------
+ *  Clear the player's selection.
+ */
 void clearSelection() {
 
   player.selectedNode.value = 0;
@@ -235,6 +195,10 @@ void clearSelection() {
 
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Clear the player's highlight and selection.
+ */
 void clearHighlightAndSelection() {
 
   player.selectedNode.value = 0;
@@ -245,6 +209,10 @@ void clearHighlightAndSelection() {
 
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Is the puzzle complete?  All cells should have a 'node' value.
+ */
 bool isPuzzleComplete() {
 
   for (byte y = 0; y < puzzle.maximum.y; y++) {
@@ -265,9 +233,13 @@ bool isPuzzleComplete() {
   
 }
 
-byte getNumberOfPuzzles(byte puzzleType) {
 
-  switch (puzzleType) {
+/* ----------------------------------------------------------------------------
+ *  Return the number of puzzles for a nominated level.
+ */
+byte getNumberOfPuzzles(byte puzzleLevel) {
+
+  switch (puzzleLevel) {
     
     case PUZZLE_5X5:
       return puzzles_5x5_count;
@@ -288,6 +260,10 @@ byte getNumberOfPuzzles(byte puzzleType) {
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *  Toggle the sound setting and commit to the EEPROM.
+ */
 void toggleSoundSettings() {
 
   if (arduboy.audio.enabled()) {
@@ -305,11 +281,11 @@ void toggleSoundSettings() {
     
 }
 
+
 /* ----------------------------------------------------------------------------
  *  Draw a horizontal dotted line. 
  *  
  *  So much nicer than a solid line!
- *  
  */
 void drawHorizontalDottedLine(int x1, int x2, int y) {
 

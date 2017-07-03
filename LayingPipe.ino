@@ -1,3 +1,7 @@
+/* ----------------------------------------------------------------------------
+ *   Pipes  by  Simon Holmes, 2017 
+ * ---------------------------------------------------------------------------- 
+ */
 #include <Arduboy2.h> 
 #include "Images.h"
 #include "Puzzles.h"
@@ -36,12 +40,20 @@ Arduboy2 arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 Sprites sprites;
 
+
+/* ----------------------------------------------------------------------------
+ *  Basic structure to hold a node value and coordinates ..
+ */
 struct Node {
   byte x;
   byte y;
   byte value;
 };
 
+
+/* ----------------------------------------------------------------------------
+ *  Player structure to record the highlighted and selected node ..
+ */
 struct Player {
   Node highlightedNode;
   Node selectedNode;
@@ -52,29 +64,35 @@ player =
     {0, 0, 0} 
   };
 
+/* ----------------------------------------------------------------------------
+ *  Scroll bar structure used to record the scroll bar location and rendering 
+ *  properties.  These change depending on the number of rows in the puzzle. 
+ */
 struct Slider {
-  byte unit;  
-  byte overall;  
+  byte unit;                              // Number of pixels / row for the slider.
+  byte overall;                           // Height of the slider portion in pixels.
 };
 
-struct Scrollbar {
-  byte x;
-  byte y;  
-  byte width;  
-  byte height;  
-  Slider slider;  
-};
 
+/* ----------------------------------------------------------------------------
+ *  Puzzle structure.
+ */
 struct Puzzle {
-  Node maximum;
-  Node offset;
-  Scrollbar scrollbar;
-  byte board[9][9];
+  byte level;                             // Level being played, eg. PUZZLE_5X5, PUZZLE_6X6 ..
+  byte index;                             // Puzzle within the current level being played.
+  Node maximum;                           // Used to store the dimensions of the puzzle based
+                                          // on the puzzle level, eg. PUZZLE_5X5 has a maximum
+                                          // x and y value of 5.
+  Node offset;                            // Stores the offest x and y values to ensure the 
+                                          // is rendered centrally on the screen.
+  Slider slider;                          // Scrollbar slider details.
+  byte board[9][9];                       // Actual board details - supports maximum of 9 x 9.
 }
 puzzle = 
-  { {0, 0}, 
+  {  0, 0,
     {0, 0}, 
-    {0, 0, 0, 0, {0, 0} }, 
+    {0, 0}, 
+    {0, 0}, 
     {
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
@@ -85,24 +103,25 @@ puzzle =
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
       {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}
-    }
+    },
+    
   };
 
 const byte* nodes[] = {node_0, node_1, node_2, node_3, node_4, node_5, node_6, node_7, node_8, node_9, node_10, node_11, node_12, node_13, node_14 };
-const byte* pipes[] = {pipe_nothing, pipe_horizontal, pipe_horizontal, pipe_vertical, pipe_vertical, pipe_corner_TL, pipe_corner_TL, pipe_corner_TR, pipe_corner_TR, pipe_corner_BL, pipe_corner_BL, pipe_corner_BR, pipe_corner_BR};
+const byte* pipes[] = {pipe_nothing, pipe_horizontal, pipe_horizontal, pipe_vertical, pipe_vertical, pipe_corner_TL, pipe_corner_TL, 
+                       pipe_corner_TR, pipe_corner_TR, pipe_corner_BL, pipe_corner_BL, pipe_corner_BR, pipe_corner_BR};
 const byte levels[] = {PUZZLE_5X5, PUZZLE_6X6, PUZZLE_7X7, PUZZLE_8X8, PUZZLE_9X9};
 
 byte frame = 0;
 
-byte puzzleType = PUZZLE_5X5;
-byte puzzleIdx = 0;
-
-
 
 /* ----------------------------------------------------------------------------
-    Initialise the Arduboy and get ready ..
-*/
+ *   Initialise the Arduboy and get ready ..
+ */
 void setup() {
+
+  puzzle.level = PUZZLE_5X5;
+  puzzle.index = 0;
 
   if (!isEEPROMInitialised()) { initEEPROM(); }
 
@@ -115,9 +134,9 @@ void setup() {
 
 
 /* ----------------------------------------------------------------------------
-    Define an array of function pointers that represent the various modes of
-    game play.  These correspond to the STATE_GAME_ .. constants.
-*/
+ *   Define an array of function pointers that represent the various modes of
+ *   game play.  These correspond to the STATE_GAME_ .. constants.
+ */
 
 #define STATE_GAME_INTRO                      0
 #define STATE_GAME_LEVEL_SELECT               1
@@ -139,12 +158,12 @@ const FunctionPointer PROGMEM gameLoop[] = {
   play_InitGame,
   play_NoSelection,
   play_NodeSelected,
-  drawGameOver
+  gameOver
 };
 
 
 /* ----------------------------------------------------------------------------
- *  Lay pipes !
+ *  Play pipes !
  */
 void loop() {
 

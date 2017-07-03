@@ -1,5 +1,13 @@
 #define ANIMATION_DELAY_SHORT     20
 
+
+/* ----------------------------------------------------------------------------
+ *   Render the Splash screen.
+ *   
+ *   The pipes are rendered one-by-one to simulate the laying of pipe.  The
+ *   rendering function allows the user to press the A button to skip past the
+ *   animations or the B button to toggle sounds.
+ */
 void drawSplash() { 
 
   bool skipSplash = false;
@@ -63,6 +71,14 @@ void drawSplash() {
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Render the a single pipe animation.
+ *   
+ *   The pipes are rendered one-by-one to simulate the laying of pipe.  The
+ *   rendering function allows the user to press the A button to skip past the
+ *   animations or the B button to toggle sounds.
+ */
 bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool skip) {
 
   if (skip) return true;
@@ -73,7 +89,7 @@ bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool 
   arduboy.display();
   arduboy.pollButtons();
   
-  playSplashSound();
+  playSplashTune();
 
   while (i >= 0) {
 
@@ -95,6 +111,12 @@ bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool 
 }
 
 
+/* ----------------------------------------------------------------------------
+ *   Delay the screen for a period of time.  
+ *   
+ *   The delay can be cancelled by clicking either the A button.  Clicking the
+ *   B button will toggle the sound on or off.
+ */
 bool splashDelay(int delayLength, bool skip) {
 
   if (skip) return true;
@@ -122,6 +144,12 @@ bool splashDelay(int delayLength, bool skip) {
 }
 
 
+/* ----------------------------------------------------------------------------
+ *   Delay the screen for ever.  
+ *   
+ *   The delay can be cancelled by clicking either the A button.  Clicking the
+ *   B button will toggle the sound on or off.
+ */
 void splashWaitForever() {
 
   arduboy.pollButtons();

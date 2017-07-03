@@ -8,6 +8,13 @@
 #define EEPROM_9X9              EEPROM_START + 6
 #define EEPROM_PUZZLE_OFFSET    EEPROM_START - 3
 
+
+/* ----------------------------------------------------------------------------
+ *   Is the EEPROM initialised? 
+ *   
+ *   Looks for the characters 'L' and 'P' in the first two bytes of the EEPROM
+ *   memory range starting from byte 200.
+ */
 bool isEEPROMInitialised() {
 
   byte c1 = EEPROM.read(EEPROM_START_C1);
@@ -17,6 +24,13 @@ bool isEEPROMInitialised() {
 
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Initialise the EEPROM.
+ *   
+ *   Sets the first wo bytes of the EEPROM to the characters 'L' and 'P' and 
+ *   clears the levels to zero.
+ */
 void initEEPROM() {
 
   EEPROM.write(EEPROM_START_C1, 76);
@@ -29,31 +43,22 @@ void initEEPROM() {
 
 }
 
-void updateEEPROM(byte puzzleType, byte val) {
 
-  EEPROM.write(EEPROM_PUZZLE_OFFSET + puzzleType, val);
-
-}
-
-
-byte readEEPROM(byte puzzleType) {
-
-  return EEPROM.read(EEPROM_PUZZLE_OFFSET + puzzleType);
-
-}
-
-/*
-  hi = EEPROM.read(address + (5*j));
-        lo = EEPROM.read(address + (5*j) + 1);
-
-        if ((hi == 0xFF) && (lo == 0xFF))
-        {
-        tmpScore = 0;
-        }
-        else
-        {
-          tmpScore = (hi << 8) | lo;
-        }
+/* ----------------------------------------------------------------------------
+ *   Update the saved puzzle index for the nominated level.
  */
+void updateEEPROM(byte puzzleLevel, byte index) {
+
+  EEPROM.write(EEPROM_PUZZLE_OFFSET + puzzleLevel, index);
+
+}
 
 
+/* ----------------------------------------------------------------------------
+ *   Read the saved puzzle index for the nominated level.
+ */
+byte readEEPROM(byte puzzleLevel) {
+
+  return EEPROM.read(EEPROM_PUZZLE_OFFSET + puzzleLevel);
+
+}

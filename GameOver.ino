@@ -1,4 +1,10 @@
-void drawGameOver() { 
+/* ----------------------------------------------------------------------------
+ *   Render the Game Over screen.
+ *   
+ *   If this is the last puzzle in the level, the message 'Level Finished' is
+ *   displayed otherwise a simple 'Congratulations' is shown.
+ */
+void gameOver() { 
   
   arduboy.delayShort(1000);
 
@@ -41,6 +47,10 @@ void drawGameOver() {
   sprites.drawOverwrite(96,  48, logo_elbow_LB, frame);
   arduboy.display();
 
+  
+  // Play 'puzzle solved' tune before the message is shown ..
+
+  playPuzzleSolved();
   arduboy.delayShort(1000);
 
   arduboy.setTextColor(BLACK);
@@ -48,7 +58,7 @@ void drawGameOver() {
 
   arduboy.fillRect(12, 23, 104, 18, WHITE);
   
-  if (puzzleIdx == getNumberOfPuzzles(puzzleType) - 1) {
+  if (puzzle.index == getNumberOfPuzzles(puzzle.level) - 1) {
   
     arduboy.setCursor(21, 28);
     arduboy.print("Level Finished!");
@@ -63,36 +73,35 @@ void drawGameOver() {
 
   }
 
-  puzzleIdx++;
-  updateEEPROM(puzzleType, puzzleIdx);
+  puzzle.index++;
+  updateEEPROM(puzzle.level, puzzle.index);
   
   arduboy.display();
   arduboy.setTextColor(WHITE);
   arduboy.setTextBackground(BLACK);
 
-  playPuzzleSolved();
-
-  gameOverDelay(1000, false);
-
+  gameOverDelay(1000);
   
 }
 
-bool gameOverDelay(int delayLength, bool skip) {
 
-  if (skip) return true;
+/* ----------------------------------------------------------------------------
+ *   Delay the screen for a period of time.  
+ *   
+ *   The delay can be cancelled by clicking either the A or B button.
+ */
+void gameOverDelay(int delayLength) {
 
   arduboy.pollButtons();
 
   while (delayLength >= 0) {
 
-    if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON)) { return true; }
+    if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON)) { break; /* return true;*/ }
     
     arduboy.delayShort(5);  
     delayLength--;
 
   }
-
-  return false;
   
 }
 
