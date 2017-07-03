@@ -9,13 +9,13 @@ The initial splash screen is animated and shows pipes being layed.  The user can
 
 The game has six levels ranging from super easy to hard.  The easy puzzles have a 5 x 5 cell configuration and they increase in size to 9 x 9.  Press 'A' to select a level or 'B' to return to the front splash screen.
 
-![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/domino_game_02.png) ![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/domino_game_03.png)
+![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/Pipes_02.png) ![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/Pipes_03.png)
 
 Depending on the level chosen, the board may fit onto the screen or you may need to scroll up and down to see the action.  Pressing 'A' on a node will select that node.  
 
-![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/domino_game_04.png) 
+![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/Pipes_04.png) 
 
-![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/domino_game_04.png) 
-![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/domino_game_04.png)
+![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/Pipes_04.png) 
+![Pipes](https://github.com/filmote/LayingPipe/blob/master/images/Pipes_04.png)
   
 Pressing the 'B' button will return you to the level select if no node has been selected.  Alternatively, if a node has been selected, pressing 'B' will erase the pipe that is currently being layed.
