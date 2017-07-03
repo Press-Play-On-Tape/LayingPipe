@@ -294,3 +294,17 @@ void drawHorizontalDottedLine(int x1, int x2, int y) {
   }
   
 }
+
+
+/* ----------------------------------------------------------------------------
+ *  Sends a screen shot to the programmer.
+ *  
+ */
+#ifdef SCREENSHOTS
+
+void screenShot() {
+  Serial.write(arduboy.getBuffer(), 128 * 64 / 8);
+  arduboy.delayShort(1000);
+}
+
+#endif

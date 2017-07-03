@@ -64,6 +64,9 @@ void drawSplash() {
   sprites.drawOverwrite(23, 21, logo, frame);
   arduboy.display();
 
+#ifdef SCREENSHOTS
+  //screenShot();
+#endif
 
   if (!skipSplash) splashWaitForever();
 
@@ -87,17 +90,20 @@ bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool 
   
   sprites.drawOverwrite(x, y, bitmap, frame);
   arduboy.display();
-  arduboy.pollButtons();
   
   playSplashTune();
 
   while (i >= 0) {
+
+    arduboy.pollButtons();
 
     if (arduboy.justPressed(A_BUTTON)) { return true; }
 
     if (arduboy.justPressed(B_BUTTON)) { 
 
     	toggleSoundSettings();
+      sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+      arduboy.display();
     	
     }
     
@@ -121,9 +127,10 @@ bool splashDelay(int delayLength, bool skip) {
 
   if (skip) return true;
 
-  arduboy.pollButtons();
 
   while (delayLength >= 0) {
+
+    arduboy.pollButtons();
 
     if (arduboy.justPressed(A_BUTTON)) { return true; }
 
@@ -131,6 +138,7 @@ bool splashDelay(int delayLength, bool skip) {
 
     	toggleSoundSettings();
       sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+      arduboy.display();
         
     }
     
@@ -152,16 +160,18 @@ bool splashDelay(int delayLength, bool skip) {
  */
 void splashWaitForever() {
 
-  arduboy.pollButtons();
-
   while (true) {
 
-    if (arduboy.pressed(A_BUTTON)) { break; }
+    arduboy.pollButtons();
 
-    if (arduboy.pressed(B_BUTTON)) { 
+    if (arduboy.justPressed(A_BUTTON)) { break; }
+
+    if (arduboy.justPressed(B_BUTTON)) { 
 
       toggleSoundSettings();
-        
+      sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+      arduboy.display();
+       
     }
     
     arduboy.delayShort(5);  
