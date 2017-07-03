@@ -58,7 +58,7 @@ void drawSplash() {
 
   skipSplash = splashDelay(200, skipSplash);
 
-  if (!skipDisplay) {
+  if (!skipSplash) {
 
     arduboy.fillRect(19, 18, 92, 30, BLACK);
     drawHorizontalDottedLine(20, 110, 19);
