@@ -1,9 +1,16 @@
+const uint16_t puzzleSolved[] PROGMEM = {
+  NOTE_C4,50, NOTE_D4,50, NOTE_E4,50, 
+  NOTE_C4,50, NOTE_D4,50, NOTE_E4,50, 
+  NOTE_C4,50, NOTE_D4,50, NOTE_E4,50, 
+  TONES_END
+};
+
 /* ----------------------------------------------------------------------------
  *   Play the 'Clear Selection' tune.
  */
 void playClearSelectionTune() {
   
- sound.tone(NOTE_C2,50, NOTE_D2,50, NOTE_E2,50);
+  sound.tone(NOTE_C2,50, NOTE_D2,50, NOTE_E2,50);
   
 }
 
@@ -13,7 +20,7 @@ void playClearSelectionTune() {
  */
 void playSelectNodeTune() {
   
- sound.tone(NOTE_C4, 50);
+  sound.tone(NOTE_C4, 50);
 
 }
 
@@ -22,8 +29,9 @@ void playSelectNodeTune() {
  *   Play the 'Match Node' tune.
  */
 void playMatchNodeTune() {
-  
- sound.tone(NOTE_C4,50, NOTE_D4,50, NOTE_E4,50);
+
+  sound.tone(NOTE_C4,50, NOTE_D4,50, NOTE_E4,50);
+
 }
 
 
@@ -32,7 +40,7 @@ void playMatchNodeTune() {
  */
 void playSplashTune() {
   
- sound.tone(NOTE_C1,50, NOTE_D1,50, NOTE_C1,50);
+  sound.tone(NOTE_C1,50, NOTE_D1,50, NOTE_C1,50);
  
 }
 
@@ -40,6 +48,8 @@ void playSplashTune() {
  *   Play the 'Puzzle Solved' tune.
  */
 void playPuzzleSolved() {
+
+  sound.tones(puzzleSolved);
   
 }
 
