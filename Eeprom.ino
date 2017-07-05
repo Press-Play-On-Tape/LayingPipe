@@ -33,13 +33,13 @@ bool isEEPROMInitialised() {
  */
 void initEEPROM() {
 
-  EEPROM.write(EEPROM_START_C1, 76);
-  EEPROM.write(EEPROM_START_C2, 80);
-  EEPROM.write(EEPROM_5X5, 0);
-  EEPROM.write(EEPROM_6X6, 0);
-  EEPROM.write(EEPROM_7X7, 0);
-  EEPROM.write(EEPROM_8X8, 0);
-  EEPROM.write(EEPROM_9X9, 0);
+  EEPROM.update(EEPROM_START_C1, 76);
+  EEPROM.update(EEPROM_START_C2, 80);
+  EEPROM.update(EEPROM_5X5, 0);
+  EEPROM.update(EEPROM_6X6, 0);
+  EEPROM.update(EEPROM_7X7, 0);
+  EEPROM.update(EEPROM_8X8, 0);
+  EEPROM.update(EEPROM_9X9, 0);
 
 }
 
@@ -49,7 +49,7 @@ void initEEPROM() {
  */
 void updateEEPROM(byte puzzleLevel, byte index) {
 
-  EEPROM.write(EEPROM_PUZZLE_OFFSET + puzzleLevel, index);
+  EEPROM.update(EEPROM_PUZZLE_OFFSET + puzzleLevel, index);
 
 }
 

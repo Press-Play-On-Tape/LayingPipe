@@ -127,10 +127,9 @@ void setup() {
 
   if (!isEEPROMInitialised()) { initEEPROM(); }
 
-  arduboy.boot();
+  arduboy.begin();
   arduboy.setFrameRate(30);
   arduboy.clear();
-  arduboy.audio.begin();
 
 }
 
