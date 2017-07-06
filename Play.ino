@@ -478,9 +478,9 @@ void updatePipeWhenReversing(byte x, byte y) {
  *   
  *   direction:     The button the user clicked, eg. UP, DOWN, LEFT and Right.
  *   selectedNode:  The node previously selected.
- *   x and y:       Coordinates to test.
+ *   x and y:       Coordinates to test.  Passed as char to allow negatives.
  */
-bool validMove(byte direction, Node selectedNode, byte x, byte y) {
+bool validMove(byte direction, Node selectedNode, char x, char y) {
 
   
   // Off the grid!

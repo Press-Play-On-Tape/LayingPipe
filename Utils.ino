@@ -115,7 +115,7 @@ bool nodeAlreadyPlayed(byte value) {
 /* ----------------------------------------------------------------------------
  *  Clear the board of pipes for a certain node value.
  */
-bool clearBoard(byte nodeValue) {
+void clearBoard(byte nodeValue) {
 
   for (byte y = 0; y < puzzle.maximum.y; y++) {
     
@@ -257,6 +257,8 @@ byte getNumberOfPuzzles(byte puzzleLevel) {
       return puzzles_9x9_count;
 
   }
+
+  return 0;
   
 }
 
