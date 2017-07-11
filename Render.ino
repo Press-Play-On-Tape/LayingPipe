@@ -83,17 +83,13 @@ void renderBoard(int xOffset, int yOffset, byte topRow) {
 
 
     // Top arrow ..
-    
-    arduboy.drawPixel(SCROLLBAR_X + 4, SCROLLBAR_Y + 2, WHITE);
-    arduboy.drawLine(SCROLLBAR_X + 3, SCROLLBAR_Y + 3, SCROLLBAR_X + 5, SCROLLBAR_Y + 3, WHITE);
-    arduboy.drawLine(SCROLLBAR_X + 2, SCROLLBAR_Y + 4, SCROLLBAR_X + 6, SCROLLBAR_Y + 4, WHITE);
+
+    arduboy.fillTriangle(SCROLLBAR_X + 4, SCROLLBAR_Y + 2, SCROLLBAR_X + 2, SCROLLBAR_Y + 4, SCROLLBAR_X + 6, SCROLLBAR_Y + 4, WHITE);
 
 
     // Bottom arrow ..
     
-    arduboy.drawLine(SCROLLBAR_X + 2, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 5, SCROLLBAR_X + 6, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 5, WHITE);
-    arduboy.drawLine(SCROLLBAR_X + 3, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 4, SCROLLBAR_X + 5, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 4, WHITE);
-    arduboy.drawPixel(SCROLLBAR_X + 4, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 3, WHITE);
+    arduboy.fillTriangle(SCROLLBAR_X + 2, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 5, SCROLLBAR_X + 6, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 5, SCROLLBAR_X + 4, SCROLLBAR_Y + SCROLLBAR_HEIGHT - 3, WHITE);
 
   }
     

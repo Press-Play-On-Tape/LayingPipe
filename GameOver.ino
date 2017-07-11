@@ -62,14 +62,14 @@ void gameOver() {
   
     arduboy.setCursor(21, 28);
     arduboy.print("Level Finished!");
-    gameState = STATE_GAME_LEVEL_SELECT;
+    gameState = STATE_LEVEL_SELECT;
   
   }
   else {
    
     arduboy.setCursor(18, 28);
     arduboy.print("Congratulations!");
-    gameState = STATE_GAME_INIT_GAME;
+    gameState = STATE_INIT_GAME;
 
   }
 

@@ -5,7 +5,7 @@ void play_InitGame() {
 
   arduboy.clear();
   initBoard(puzzle.level, puzzle.index);
-  gameState = STATE_GAME_NO_SELECTION;
+  gameState = STATE_NO_SELECTION;
   
 }
 
@@ -33,7 +33,7 @@ void play_NoSelection() {
       player.selectedNode.value = getNodeValue(player.highlightedNode.x, player.highlightedNode.y);
       player.selectedNode.x = player.highlightedNode.x;
       player.selectedNode.y = player.highlightedNode.y;
-      gameState = STATE_GAME_NODE_SELECTED;
+      gameState = STATE_NODE_SELECTED;
 
     }
     else {
@@ -41,7 +41,7 @@ void play_NoSelection() {
       player.selectedNode.value = getNodeValue(player.highlightedNode.x, player.highlightedNode.y);
       player.selectedNode.x = player.highlightedNode.x;
       player.selectedNode.y = player.highlightedNode.y;
-      gameState = STATE_GAME_NODE_SELECTED;
+      gameState = STATE_NODE_SELECTED;
       playSelectNodeTune();
 
     }
@@ -52,14 +52,14 @@ void play_NoSelection() {
 
     if (puzzle.index == 0) {
         
-      gameState = STATE_GAME_LEVEL_SELECT;
-      prevState = STATE_GAME_NO_SELECTION;
+      gameState = STATE_LEVEL_SELECT;
+      prevState = STATE_NO_SELECTION;
 
     }
     else {
         
-      gameState = STATE_GAME_PUZZLE_SELECT;
-      prevState = STATE_GAME_NO_SELECTION;
+      gameState = STATE_PUZZLE_SELECT;
+      prevState = STATE_NO_SELECTION;
         
     }
       
@@ -126,31 +126,31 @@ void play_NodeSelected() {
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
           updatePipeWhenReversing(player.highlightedNode.x - 1, player.highlightedNode.y);
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_HORIZONTAL_RL:
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
-          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setCellValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_LT:
         case PIPE_CORNER_RT:
         case PIPE_VERTICAL_BT:
-          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_BL, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setCellValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_BL, player.selectedNode.value);
           break;
 
         case PIPE_CORNER_LB:
         case PIPE_CORNER_RB:
         case PIPE_VERTICAL_TB:
-          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_TL, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x - 1, player.highlightedNode.y)) { setCellValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_TL, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value);
+          setCellValue(player.highlightedNode.x - 1, player.highlightedNode.y, PIPE_HORIZONTAL_RL, player.selectedNode.value);
           break;
 
       }
@@ -162,7 +162,7 @@ void play_NodeSelected() {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playClearSelectionTune();
           
       }
@@ -173,7 +173,7 @@ void play_NodeSelected() {
       if (isNode(player.highlightedNode.x - 1, player.highlightedNode.y)  && getNodeValue(player.highlightedNode.x - 1, player.highlightedNode.y) == player.selectedNode.value) {
     
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playMatchNodeTune();
  
 
@@ -181,7 +181,7 @@ void play_NodeSelected() {
 
         if (isPuzzleComplete()) {
 
-          gameState = STATE_GAME_GAME_OVER;
+          gameState = STATE_GAME_OVER;
     
         }
                  
@@ -203,31 +203,31 @@ void play_NodeSelected() {
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
           updatePipeWhenReversing(player.highlightedNode.x + 1, player.highlightedNode.y);
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_HORIZONTAL_LR:
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
-          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setCellValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_RT:
         case PIPE_CORNER_LT:
         case PIPE_VERTICAL_BT:
-          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_BR, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setCellValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_BR, player.selectedNode.value);
           break;
 
         case PIPE_CORNER_RB:
         case PIPE_CORNER_LB:
         case PIPE_VERTICAL_TB:
-          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_TR, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x + 1, player.highlightedNode.y)) { setCellValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_TR, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value);
+          setCellValue(player.highlightedNode.x + 1, player.highlightedNode.y, PIPE_HORIZONTAL_LR, player.selectedNode.value);
           break;
 
       }
@@ -239,7 +239,7 @@ void play_NodeSelected() {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playClearSelectionTune();
           
       }
@@ -250,7 +250,7 @@ void play_NodeSelected() {
       if (isNode(player.highlightedNode.x + 1, player.highlightedNode.y)  && getNodeValue(player.highlightedNode.x + 1, player.highlightedNode.y) == player.selectedNode.value) {
     
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playMatchNodeTune();
   
 
@@ -258,7 +258,7 @@ void play_NodeSelected() {
 
         if (isPuzzleComplete()) {
 
-          gameState = STATE_GAME_GAME_OVER;
+          gameState = STATE_GAME_OVER;
     
         }
                 
@@ -280,31 +280,31 @@ void play_NodeSelected() {
         case PIPE_CORNER_RB:
         case PIPE_CORNER_LB:
           updatePipeWhenReversing(player.highlightedNode.x, player.highlightedNode.y - 1);
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_VERTICAL_BT:
         case PIPE_CORNER_LT:
         case PIPE_CORNER_RT:
-          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setCellValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
         case PIPE_HORIZONTAL_LR:
-          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_LT, player.selectedNode.value); 
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setCellValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_LT, player.selectedNode.value); 
           break;
 
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
         case PIPE_HORIZONTAL_RL:
-          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_RT, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y - 1)) { setCellValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_RT, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value);
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y - 1, PIPE_VERTICAL_BT, player.selectedNode.value);
           break;
 
       }
@@ -316,7 +316,7 @@ void play_NodeSelected() {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playClearSelectionTune();
          
       }
@@ -327,7 +327,7 @@ void play_NodeSelected() {
       if (isNode(player.highlightedNode.x, player.highlightedNode.y - 1)  && getNodeValue(player.highlightedNode.x, player.highlightedNode.y - 1) == player.selectedNode.value) {
     
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playMatchNodeTune();
  
 
@@ -335,7 +335,7 @@ void play_NodeSelected() {
 
         if (isPuzzleComplete()) {
 
-          gameState = STATE_GAME_GAME_OVER;
+          gameState = STATE_GAME_OVER;
     
         }
                  
@@ -356,31 +356,31 @@ void play_NodeSelected() {
         case PIPE_CORNER_RT:
         case PIPE_CORNER_LT:
           updatePipeWhenReversing(player.highlightedNode.x, player.highlightedNode.y + 1);
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, NOTHING, NOTHING);
           break;
 
         case PIPE_VERTICAL_TB:
         case PIPE_CORNER_LB:
         case PIPE_CORNER_RB:
-          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setCellValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
           break;
 
         case PIPE_CORNER_TR:
         case PIPE_CORNER_BR:
         case PIPE_HORIZONTAL_LR:
-          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_LB, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setCellValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_LB, player.selectedNode.value);
           break;
 
         case PIPE_CORNER_TL:
         case PIPE_CORNER_BL:
         case PIPE_HORIZONTAL_RL:
-          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_RB, player.selectedNode.value);
+          if (!isNode(player.highlightedNode.x, player.highlightedNode.y + 1)) { setCellValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value); }
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y, PIPE_CORNER_RB, player.selectedNode.value);
           break;
 
         case NODE:
-          setPipeValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value);
+          setCellValue(player.highlightedNode.x, player.highlightedNode.y + 1, PIPE_VERTICAL_TB, player.selectedNode.value);
           break;
         
       }
@@ -392,7 +392,7 @@ void play_NodeSelected() {
     
         clearBoard(player.selectedNode.value);
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playClearSelectionTune();
           
       }
@@ -403,7 +403,7 @@ void play_NodeSelected() {
       if (isNode(player.highlightedNode.x, player.highlightedNode.y + 1)  && getNodeValue(player.highlightedNode.x, player.highlightedNode.y + 1) == player.selectedNode.value) {
     
         clearSelection();
-        gameState = STATE_GAME_NO_SELECTION;
+        gameState = STATE_NO_SELECTION;
         playMatchNodeTune();
 
 
@@ -411,7 +411,7 @@ void play_NodeSelected() {
 
         if (isPuzzleComplete()) {
 
-          gameState = STATE_GAME_GAME_OVER;
+          gameState = STATE_GAME_OVER;
     
         }
   
@@ -427,7 +427,7 @@ void play_NodeSelected() {
 
     clearBoard(player.selectedNode.value);
     clearSelection();
-    gameState = STATE_GAME_NO_SELECTION;
+    gameState = STATE_NO_SELECTION;
       
   }
 
@@ -436,6 +436,10 @@ void play_NodeSelected() {
   
 }
 
+
+/* ----------------------------------------------------------------------------
+ *   Fix the pipe graphics when reversing back on yourself.
+ */
 void updatePipeWhenReversing(byte x, byte y) {
 
   switch (getPipeValue(x, y)) {
@@ -443,25 +447,25 @@ void updatePipeWhenReversing(byte x, byte y) {
     case PIPE_CORNER_TR:           
     case PIPE_CORNER_TL:                   
     case PIPE_VERTICAL_TB:                 
-      setPipeValue(x, y, PIPE_VERTICAL_TB, player.selectedNode.value);
+      setCellValue(x, y, PIPE_VERTICAL_TB, player.selectedNode.value);
       break;
 
     case PIPE_CORNER_BR:          
     case PIPE_CORNER_BL:          
     case PIPE_VERTICAL_BT:        
-      setPipeValue(x, y, PIPE_VERTICAL_BT, player.selectedNode.value);
+      setCellValue(x, y, PIPE_VERTICAL_BT, player.selectedNode.value);
       break;
 
     case PIPE_CORNER_LT:
     case PIPE_CORNER_LB:
     case PIPE_HORIZONTAL_LR:
-      setPipeValue(x, y, PIPE_HORIZONTAL_LR, player.selectedNode.value);
+      setCellValue(x, y, PIPE_HORIZONTAL_LR, player.selectedNode.value);
       break;
            
     case PIPE_CORNER_RT:                   
     case PIPE_CORNER_RB: 
     case PIPE_HORIZONTAL_RL:        
-      setPipeValue(x, y, PIPE_HORIZONTAL_RL, player.selectedNode.value);
+      setCellValue(x, y, PIPE_HORIZONTAL_RL, player.selectedNode.value);
       break;
  
   }
@@ -480,7 +484,7 @@ void updatePipeWhenReversing(byte x, byte y) {
  *   selectedNode:  The node previously selected.
  *   x and y:       Coordinates to test.  Passed as char to allow negatives.
  */
-bool validMove(byte direction, Node selectedNode, char x, char y) {
+bool validMove(byte direction, Node selectedNode, int x, int y) {
 
   
   // Off the grid!

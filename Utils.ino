@@ -27,7 +27,7 @@ void initBoard(byte puzzleType, byte puzzleNumber) {
   byte y = 0;
   byte z = 0;
   
-  byte bytesToRead = (puzzleType % 2 == 0 ? (puzzleType / 2) * puzzleType : ((puzzleType / 2) + 1) * puzzleType);
+  byte bytesToRead = (puzzleType % 2 == 0 ? (puzzleType / 2) * puzzleType : ((puzzleType + 1) / 2) * puzzleType);
 
   puzzle.maximum.x = puzzle.maximum.y = puzzleType;
   puzzle.offset.x = pgm_read_byte(&puzzles_details[(puzzleType - 5) * 4]);
@@ -177,7 +177,7 @@ byte getPipeValue(byte x, byte y) {
 /* ----------------------------------------------------------------------------
  *  Set the pipe value for the position.
  */
-void setPipeValue(byte x, byte y, byte pipeValue, byte nodeValue) {
+void setCellValue(byte x, byte y, byte pipeValue, byte nodeValue) {
   
   puzzle.board[y][x] = (pipeValue << 4) | nodeValue;
   

@@ -70,7 +70,7 @@ void drawSplash() {
     
   }
 
-  gameState = STATE_GAME_LEVEL_SELECT;
+  gameState = STATE_LEVEL_SELECT;
   
 }
 

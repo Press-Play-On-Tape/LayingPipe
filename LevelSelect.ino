@@ -1,4 +1,5 @@
 
+#define MENU_ITEM_3            3
 #define MENU_ITEM_3_X          19
 #define MENU_ITEM_3_1_Y        19
 #define MENU_ITEM_3_2_Y        29
@@ -6,6 +7,7 @@
 #define MENU_ITEM_3_WIDTH      92   
 #define MENU_ITEM_3_HEIGHT     9
 
+#define MENU_ITEM_2            2
 #define MENU_ITEM_2_X          17
 #define MENU_ITEM_2_1_Y        23
 #define MENU_ITEM_2_2_Y        35
@@ -15,7 +17,6 @@
 
 byte levelSelect_selectedItem = 0;
 byte levelSelect_topItem = 0;
-byte levelSelect_noOfItems = 3;
 byte puzzleSelect_selectedItem = 0;
 
 
@@ -63,7 +64,7 @@ void levelSelect() {
 
   if (arduboy.justPressed(UP_BUTTON) && levelSelect_selectedItem > 0) 					            { levelSelect_selectedItem--; }
   if (arduboy.justPressed(DOWN_BUTTON) && levelSelect_selectedItem < sizeof(levels) - 1) 	  { levelSelect_selectedItem++; }
-  if (arduboy.justPressed(B_BUTTON)) 												                                { gameState = STATE_GAME_INTRO; }
+  if (arduboy.justPressed(B_BUTTON)) 												                                { gameState = STATE_INTRO; }
   
   if (arduboy.justPressed(A_BUTTON)) { 
 	  
@@ -76,14 +77,14 @@ void levelSelect() {
     
     if (readEEPROM(puzzle.level) > 0) {
       
-  	  gameState = STATE_GAME_PUZZLE_SELECT;
-      prevState = STATE_GAME_LEVEL_SELECT;
+  	  gameState = STATE_PUZZLE_SELECT;
+      prevState = STATE_LEVEL_SELECT;
       puzzleSelect_selectedItem = 0;
      
     }
     else {
       
-      gameState = STATE_GAME_INIT_GAME;
+      gameState = STATE_INIT_GAME;
       
     }
 	  
@@ -92,16 +93,16 @@ void levelSelect() {
   
   // Adjust the top menu item based on selected item ..
   
-  if (levelSelect_selectedItem < levelSelect_noOfItems - 1) {
+  if (levelSelect_selectedItem < MENU_ITEM_3 - 1) {
 
 	  levelSelect_topItem = 0;
 
   }
   else {
 
-    if (levelSelect_selectedItem > sizeof(levels) - levelSelect_noOfItems + 1) {
+    if (levelSelect_selectedItem > sizeof(levels) - MENU_ITEM_3 + 1) {
 
-      levelSelect_topItem = sizeof(levels) - levelSelect_noOfItems;
+      levelSelect_topItem = sizeof(levels) - MENU_ITEM_3;
 
   	}
   	else {
@@ -233,7 +234,7 @@ void puzzleSelect() {
    
   if (arduboy.justPressed(UP_BUTTON) && puzzleSelect_selectedItem > 0)         { puzzleSelect_selectedItem--; }
   if (arduboy.justPressed(DOWN_BUTTON) && puzzleSelect_selectedItem < 1)       { puzzleSelect_selectedItem++; }
-  if (arduboy.justPressed(B_BUTTON))                                           { gameState = STATE_GAME_LEVEL_SELECT; }
+  if (arduboy.justPressed(B_BUTTON))                                           { gameState = STATE_LEVEL_SELECT; }
   
   if (arduboy.justPressed(A_BUTTON)) { 
 	  
@@ -253,7 +254,7 @@ void puzzleSelect() {
 		  
 	  }
 	  
-	  gameState = STATE_GAME_INIT_GAME;
+	  gameState = STATE_INIT_GAME;
 	  
   }
   
@@ -261,7 +262,7 @@ void puzzleSelect() {
   
   // Render menu ..
   
-  renderPuzzleOption(MENU_ITEM_2_X, MENU_ITEM_2_1_Y, (prevState == STATE_GAME_LEVEL_SELECT ? "Continue Playing" : " Restart Puzzle "), (puzzleSelect_selectedItem == 0));
+  renderPuzzleOption(MENU_ITEM_2_X, MENU_ITEM_2_1_Y, (prevState == STATE_LEVEL_SELECT ? "Continue Playing" : " Restart Puzzle "), (puzzleSelect_selectedItem == 0));
   renderPuzzleOption(MENU_ITEM_2_X, MENU_ITEM_2_2_Y, "  Reset Level", (puzzleSelect_selectedItem == 1));
     
 }
