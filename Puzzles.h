@@ -7,7 +7,6 @@ const byte PROGMEM puzzles_details[] = {
 };
 
 const byte puzzles_5x5_count = 30;
-const byte PROGMEM puzzles_5x5_details[] = {0, 14, 120, 40, 8, 8, 50};
 const byte PROGMEM puzzles_5x5[] = {
 
   0x10, 0x20, 0x40,  /* 01 */
