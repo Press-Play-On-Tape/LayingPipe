@@ -1,70 +1,34 @@
 {
-    "schemaVersion": 2,
-    "title" : "Pipes",
-    "description" : "The classic pipe laying game for the Arduboy.",
-    "version" : "1.0.0",     
-    "device" : "Arduboy",
-    "author" : "Filmote",
-    "url" : "https://github.com/filmote/LayingPipe",
-    "sourceUrl" : "https://github.com/filmote/LayingPipe",
-    "genre" : "Puzzle",
-    "date" : "2017-06-28",
-    "idea" : "Filmote",
-    "code" : "Filmote",
-    "art" : "Filmote",
-    "sound" : "Filmote",
-    "publisher" : "Filmote",
+  "schemaVersion": 2,
+  "title" : "Pipes",
+  "description" : "The classic pipe laying game for the Arduboy.",
+  "version" : "1.0.0",   
+  "device" : "Arduboy",
+  "author" : "Filmote",
+  "url" : "https://github.com/filmote/LayingPipe",
+  "sourceUrl" : "https://github.com/filmote/LayingPipe",
+  "genre" : "Puzzle",
+  "date" : "2017-06-28",
+  "idea" : "Filmote",
+  "code" : "Filmote",
+  "art" : "Filmote",
+  "sound" : "Filmote",
+  "publisher" : "Filmote",
   "banner": "banner.png",
   "screenshots": [
-    {
-      "title": "Title Screen",
-      "filename": "screenshot00.png"
-    },
-    {
-      "title": "Level Select",
-      "filename": "screenshot01.png"
-    },
-    {
-      "title": "Level Select",
-      "filename": "screenshot02.png"
-    },
-    {
-      "title": "Simple Game",
-      "filename": "screenshot03.png"
-    },
-    {
-      "title": "Complex Game",
-      "filename": "screenshot04.png"
-    },
-    {
-      "title": "Complex Game",
-      "filename": "screenshot05.png"
-    }
+    { "title": "Title Screen",    "filename": "screenshot00.png" },
+    { "title": "Level Select 1",  "filename": "screenshot01.png" },
+    { "title": "Level Select 2",  "filename": "screenshot02.png" },
+    { "title": "Simple Game",     "filename": "screenshot03.png" },
+    { "title": "Complex Game 1",  "filename": "screenshot04.png" },
+    { "title": "Complex Game 2",  "filename": "screenshot05.png" }
   ],
-    "buttons": [
-    {
-      "control": "Down",
-      "action": "Down"
-    },
-    {
-      "control": "Up",
-      "action": "Up"
-    },
-    {
-      "control": "Left",
-      "action": "Left"
-    },
-    {
-      "control": "Right",
-      "action": "Right"
-    },
-    {
-      "control": "A",
-      "action": "Select"
-    },
-    {
-      "control": "B",
-      "action": "Back"
-    }
+  "buttons": [
+    { "control": "Down",    "action": "Down" },
+    { "control": "Up",      "action": "Up" },
+    { "control": "Left",    "action": "Left" },
+    { "control": "Right",   "action": "Right" },
+    { "control": "A",       "action": "Select" },
+    { "control": "B",       "action": "Back" }
   ]
 }
