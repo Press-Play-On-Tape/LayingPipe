@@ -56,7 +56,8 @@ void gameOver() {
   arduboy.setTextColor(BLACK);
   arduboy.setTextBackground(WHITE);
 
-  arduboy.fillRect(12, 23, 104, 18, WHITE);
+  arduboy.fillRect(12, 23, 104, 18, BLACK);
+  arduboy.fillRect(13, 24, 102, 16, WHITE);
   
   if (puzzle.index == getNumberOfPuzzles(puzzle.level) - 1) {
   

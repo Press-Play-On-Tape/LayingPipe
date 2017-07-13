@@ -21,7 +21,7 @@ bool initEEPROM() {
   byte c1 = EEPROM.read(EEPROM_START_C1);
   byte c2 = EEPROM.read(EEPROM_START_C2);
 
-  if (c1 != 76 || c2 != 80) { // LP
+  if (c1 != 76 || c2 != 80) { // LP 76 80
   
     EEPROM.update(EEPROM_START_C1, 76);
     EEPROM.update(EEPROM_START_C2, 80);
