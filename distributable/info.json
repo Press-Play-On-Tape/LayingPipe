@@ -2,7 +2,7 @@
   "schemaVersion": 2,
   "title" : "Pipes",
   "description" : "The classic pipe laying game for the Arduboy.",
-  "version" : "1.0.0",   
+  "version" : "1.0.1",   
   "device" : "Arduboy",
   "author" : "Filmote",
   "url" : "https://github.com/filmote/LayingPipe",
