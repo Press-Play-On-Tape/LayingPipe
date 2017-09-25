@@ -1,5 +1,5 @@
 ## Pipes
-A version of the classic pipes game where you must lay pip between each pair of nodes without the pipes crossing each other.  This version has puzzles ranging from 5 x 5 to 9 x 9.
+A version of the classic pipes game where you must lay pipe between each pair of nodes without the pipes crossing each other.  This version has puzzles ranging from 5 x 5 to 9 x 9.
 <br />
 
 ## Game Play
