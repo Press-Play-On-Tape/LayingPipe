@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:leonardo",
+    "sketch": "LayingPipe.ino",
+    "output": "../build"
+}

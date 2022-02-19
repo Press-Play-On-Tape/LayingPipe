@@ -39,6 +39,8 @@
 #define STATE_NO_SELECTION           4
 #define STATE_NODE_SELECTED          5
 #define STATE_GAME_OVER              6
+#define STATE_SPLASH_INIT            7
+#define STATE_SPLASH                 8
 
 #define PUZZLE_5X5                   5
 #define PUZZLE_6X6                   6
@@ -142,8 +144,8 @@ void setup() {
 }
 
 
-byte gameState = STATE_INTRO;
-byte prevState = STATE_INTRO;
+byte gameState = STATE_SPLASH_INIT;
+byte prevState = STATE_SPLASH_INIT;
 
 
 /* ----------------------------------------------------------------------------
@@ -155,6 +157,15 @@ void loop() {
   arduboy.pollButtons();
   
   switch (gameState) {
+
+    case STATE_SPLASH_INIT:
+      splashScreen_Init();
+      splashScreen();
+      break;
+
+    case STATE_SPLASH:
+      splashScreen();
+      break;
 
     case STATE_INTRO:
       drawSplash();
