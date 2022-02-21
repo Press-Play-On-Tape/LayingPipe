@@ -137,10 +137,12 @@ void setup() {
 
   initEEPROM(); 
 
-  arduboy.begin();
+  arduboy.boot();
+  arduboy.systemButtons();
   arduboy.setFrameRate(30);
-  arduboy.clear();
-
+  arduboy.initRandomSeed();
+  arduboy.audio.begin();
+  
 }
 
 
