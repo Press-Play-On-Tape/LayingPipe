@@ -12,11 +12,11 @@ const byte PROGMEM logo[] = {
 
 const byte PROGMEM sound_icon[] = {
   8, 8,
+  
+  // Frame 0 - Sound enabled
   0x1C, 0x1C, 0x1C, 0x3E, 0x7F, 0x00, 0x2A, 0x49,
-};
 
-const byte PROGMEM no_sound_icon[] = {
-  8, 8,
+  // Frame 1 - Sound disabled
   0x1C, 0x14, 0x14, 0x22, 0x7F, 0x00, 0x00, 0x00,
 };
 

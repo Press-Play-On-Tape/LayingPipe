@@ -162,8 +162,7 @@ void loop() {
 
     case STATE_SPLASH_INIT:
       splashScreen_Init();
-      splashScreen();
-      break;
+      /*-fallthrough*/
 
     case STATE_SPLASH:
       splashScreen();

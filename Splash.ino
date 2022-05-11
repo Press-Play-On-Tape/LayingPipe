@@ -13,7 +13,7 @@ void drawSplash() {
   bool skipSplash = false;
   
   arduboy.clear(); 
-  sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+  sprites.drawOverwrite(120, 56, sound_icon, (arduboy.audio.enabled() ? 0 : 1));
   arduboy.display();
     
   skipSplash = splashAnimation(112,  0, logo_straight_TB_noflange, frame, skipSplash);
@@ -102,7 +102,7 @@ bool splashAnimation(byte x, byte y, const uint8_t *bitmap, uint8_t frame, bool 
     if (arduboy.justPressed(B_BUTTON)) { 
 
     	toggleSoundSettings();
-      sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+      sprites.drawOverwrite(120, 56, sound_icon, (arduboy.audio.enabled() ? 0 : 1));
       arduboy.display();
     	
     }
@@ -137,7 +137,7 @@ bool splashDelay(int delayLength, bool skip) {
     if (arduboy.justPressed(B_BUTTON)) { 
 
     	toggleSoundSettings();
-      sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+      sprites.drawOverwrite(120, 56, sound_icon, (arduboy.audio.enabled() ? 0 : 1));
       arduboy.display();
         
     }
@@ -153,7 +153,7 @@ bool splashDelay(int delayLength, bool skip) {
 
 
 /* ----------------------------------------------------------------------------
- *   Delay the screen for ever.  
+ *   Delay the screen forever.  
  *   
  *   The delay can be cancelled by clicking either the A button.  Clicking the
  *   B button will toggle the sound on or off.
@@ -169,7 +169,7 @@ void splashWaitForever() {
     if (arduboy.justPressed(B_BUTTON)) { 
 
       toggleSoundSettings();
-      sprites.drawOverwrite(120, 56, (arduboy.audio.enabled() ? sound_icon : no_sound_icon), frame);
+      sprites.drawOverwrite(120, 56, sound_icon, (arduboy.audio.enabled() ? 0 : 1));
       arduboy.display();
        
     }
